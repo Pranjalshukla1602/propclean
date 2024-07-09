@@ -1,0 +1,33 @@
+<!-- organ.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Organisation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="back-button" onclick="goBack()">&larr;</button>
+        </header>
+        <main id="main-content">
+            <h1>Select your Organisation</h1>
+            <p>Select your own organisation</p>
+            <label for="organisation">Organisation</label>
+            <div class="select-container">
+                <select id="office-signup" class="organisation">
+                    <option value="">Select Office</option>
+                    <option value="workvia">Workvia</option>
+                    <option value="workdesq">Workdesq</option>
+                    <option value="sso">Sapna Sangeeta Offices</option>
+                    <option value="cubispace">Cubispace</option>
+                </select>
+            </div>
+            <button class="continue-button" id="continue-button">Continue</button>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

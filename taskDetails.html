@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="taskDetails.css">
+    <title>Task Details</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Rubik', sans-serif;
+            background-color: hsl(0, 0%, 96%);
+            color: #0e0d0c;
+            user-select: none;
+        }
+
+        .menu-icon {
+            font-size: 30px;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+            z-index: 1;
+        }
+
+        .sidebar a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #FDFDFD;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            font-size: 30px;
+        }
+
+        #task-details {
+            display: flex;
+            flex-direction: column;
+            max-width: 320px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            color: #FDFDFD;
+            background-color: #7243CD;
+            border: 0;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 20px;
+            text-align: center;
+            font-family: 'Rubik', sans-serif;
+            margin-top: 10px;
+            display: block;
+        }
+
+        button:hover {
+            background-color: #402773;
+            cursor: pointer;
+        }
+
+        .completed {
+            background-color: green;
+        }
+
+        .completed:hover {
+            background-color: darkgreen;
+        }
+
+        .head {
+            text-align: center;
+            font-size: 30px;
+            padding: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #FDFDFD;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-icon" onclick="openNav()">&#9776;</div>
+    <div id="sidebar" class="sidebar">
+        <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
+        <a href="land.html">Homepage</a>
+        <a href="#" id="logoutBtn">Logout</a>
+    </div>
+    <div id="task-details">
+        <h1>Task Details</h1>
+        <p id="task-name">Loading...</p>
+        <p id="task-time"></p>
+        <button id="status-button">Mark as Complete</button>
+    </div>
+    <!-- Include Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script>
+        function openNav() {
+            document.getElementById("sidebar").style.width = "250px";
+        }
+
+        function closeNav() {
+            document.getElementById("sidebar").style.width = "0";
+        }
+
+        // Debugging logs to ensure URL parameters are read correctly
+        const urlParams = new URLSearchParams(window.location.search);
+        const taskId = urlParams.get('id');
+        const office = urlParams.get('office');
+
+        console.log('URL Parameters:', { taskId, office });
+
+        if (!taskId || !office) {
+            console.error('Invalid task or office ID');
+            document.getElementById("task-name").textContent = "Invalid task or office ID";
+            throw new Error('Invalid task or office ID');
+        } else {
+            console.log('Valid parameters:', { taskId, office });
+        }
+
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAn2hwFs7g1StFNAGVbiOxTTcLbuNq1le0",
+            authDomain: "propclean.firebaseapp.com",
+            databaseURL: "https://propclean-default-rtdb.firebaseio.com",
+            projectId: "propclean",
+            storageBucket: "propclean.appspot.com",
+            messagingSenderId: "795234019311",
+            appId: "1:795234019311:web:369566b90b91139164781a",
+            measurementId: "G-CE3LFP4HSJ"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+
+        // Correcting the office name casing based on known values
+        const officeMap = {
+            'workvia': 'Workvia',
+            'workdesq': 'Workdesq',
+            'sso': 'sso',
+            'karyasthal': 'Karyasthal',
+            'cubispace': 'Cubispace'
+        };
+
+        const correctedOffice = officeMap[office.toLowerCase()];
+        if (!correctedOffice) {
+            console.error('Invalid office name:', office);
+            document.getElementById("task-name").textContent = "Invalid office name";
+            throw new Error('Invalid office name');
+        }
+
+        const taskPath = `${correctedOffice}/${taskId}`;
+        console.log('Fetching task from path:', taskPath);
+        
+        const taskRef = firebase.database().ref(taskPath);
+        taskRef.once('value').then((snapshot) => {
+            if (snapshot.exists()) {
+                const taskData = snapshot.val();
+                console.log('Task data:', taskData);
+                document.getElementById("task-name").textContent = `Task: ${taskData.task}`;
+                document.getElementById("task-time").textContent = `Time: ${taskData.time}`;
+                const statusButton = document.getElementById("status-button");
+
+                if (taskData.status.toLowerCase() === "complete") {
+                    statusButton.textContent = "Completed";
+                    statusButton.classList.add("completed");
+                    statusButton.disabled = true;
+                } else {
+                    statusButton.textContent = "Mark as Complete";
+                    statusButton.addEventListener("click", () => {
+                        window.location.href = `upload.html?id=${taskId}&office=${correctedOffice}`;
+                    });
+                }
+            } else {
+                console.log('No task found at path:', taskPath);
+                document.getElementById("task-name").textContent = "Task not found";
+                document.getElementById("task-time").textContent = "";
+            }
+        }).catch((error) => {
+            console.error("Error fetching task details:", error);
+            document.getElementById("task-name").textContent = "Error loading task details";
+        });
+
+        document.getElementById("logoutBtn").addEventListener("click", function() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = "index.html"; // Redirect to login page
+            }).catch((error) => {
+                console.error("Error signing out:", error);
+            });
+        });
+    </script>
+</body>
+</html>

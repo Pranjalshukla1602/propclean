@@ -1,0 +1,261 @@
+<!doctype html>
+<html>
+<head>
+  <title>Office Selection</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Rubik', sans-serif;
+      background-color: hsl(0, 0%, 96%);
+      color: #0e0d0c;
+      user-select: none;
+    }
+
+    .menu-icon {
+      font-size: 30px;
+      cursor: pointer;
+      padding: 10px;
+      background-color: #111;
+      color: #FFF;
+    }
+
+    .sidebar {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+      z-index: 1;
+    }
+
+    .sidebar a {
+      padding: 15px 25px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #FDFDFD;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: #575757;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 25px;
+      font-size: 30px;
+      color: #FFF;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      max-width: 320px;
+      margin: 30px auto;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .head {
+      text-align: center;
+      font-size: 30px;
+      padding: 10px;
+    }
+
+    button {
+      color: #FDFDFD;
+      background-color: #7243CD;
+      border: 0;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 20px;
+      text-align: center;
+      font-family: 'Rubik', sans-serif;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #402773;
+      cursor: pointer;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 18px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #FFF;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    li input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 10px;
+      }
+      button {
+        font-size: 18px;
+        padding: 10px;
+      }
+      li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      li input[type="radio"] {
+        margin-bottom: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="menu-icon" onclick="openNav()">&#9776;</div>
+  <div id="sidebar" class="sidebar">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
+    <a href="land.html">Home</a>
+    <a href="daily.html">Daily Tasks</a>
+    <a href="admin-dashboard.html" id="adminDashboardLink" style="display: none;">Admin Dashboard</a>
+    <a href="#" id="logoutBtn">Logout</a>
+  </div>
+  <div class="container">
+    <div class="head">Select Office</div>
+    <select id="officeSelect">
+      <option value="Workvia">Workvia</option>
+      <option value="Workdesq">Workdesq</option>
+      <option value="sso">SSO</option>
+      <option value="Karyasthal">Cubispace</option>
+    </select>
+    <button onclick="loadOfficeTasks()">Load Daily Tasks</button>
+    <ul id="office-tasks"></ul>
+  </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAn2hwFs7g1StFNAGVbiOxTTcLbuNq1le0",
+      authDomain: "propclean.firebaseapp.com",
+      databaseURL: "https://propclean-default-rtdb.firebaseio.com",
+      projectId: "propclean",
+      storageBucket: "propclean.appspot.com",
+      messagingSenderId: "795234019311",
+      appId: "1:795234019311:web:369566b90b91139164781a",
+      measurementId: "G-CE3LFP4HSJ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const auth = getAuth(app);
+
+    window.openNav = function() {
+      document.getElementById("sidebar").style.width = "250px";
+    }
+
+    window.closeNav = function() {
+      document.getElementById("sidebar").style.width = "0";
+    }
+
+    window.loadOfficeTasks = function() {
+      const office = document.getElementById('officeSelect').value;
+      const tasksRef = ref(database, office);
+      fetchAndDisplayTasks(tasksRef, office);
+    }
+
+    function fetchAndDisplayTasks(tasksRef, office) {
+      const officeTasksEl = document.getElementById("office-tasks");
+      officeTasksEl.innerHTML = '';
+
+      onValue(tasksRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const tasksArray = Object.entries(snapshot.val());
+
+          // Sort tasks by time in ascending order
+          tasksArray.sort((a, b) => {
+            const timeA = parseTime(a[1].time);
+            const timeB = parseTime(b[1].time);
+            return timeA - timeB;
+          });
+
+          tasksArray.forEach((taskItem) => {
+            const taskData = taskItem[1];
+            const newEl = document.createElement('li');
+            newEl.innerHTML = `
+              <input type="radio" name="task" value="${taskItem[0]}" id="task-${taskItem[0]}">
+              <label for="task-${taskItem[0]}">${taskData.task} - ${taskData.time || 'No time specified'}</label>
+            `;
+            newEl.addEventListener('click', () => {
+              window.location.href = `taskDetails.html?id=${taskItem[0]}&office=${office}`;
+            });
+            officeTasksEl.appendChild(newEl);
+          });
+        } else {
+          officeTasksEl.innerHTML = 'No tasks found';
+        }
+      });
+    }
+
+    function parseTime(timeString) {
+      if (!timeString) {
+        return Infinity; // Set a very high value for missing times to sort them to the end
+      }
+      const [hours, minutes] = timeString.split(':').map(Number);
+      return hours * 60 + minutes;
+    }
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        if (isAdmin(user.email)) {
+          document.getElementById("adminDashboardLink").style.display = "block";
+        }
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
+
+    function isAdmin(email) {
+      const adminEmails = ["shanvishukla39@gmail.com", "thomas@propques.com", "amdixit1711@gmail.com","prashant.m@cubispace.com"];
+      return adminEmails.includes(email);
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      auth.signOut().then(() => {
+        window.location.href = 'index.html';
+      }).catch((error) => {
+        console.error("Error logging out: ", error);
+        alert('Error logging out.');
+      });
+    });
+  </script>
+</body>
+</html>

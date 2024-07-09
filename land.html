@@ -1,0 +1,318 @@
+<!doctype html>
+<html>
+<head>
+  <title>Propclean Landing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Rubik', sans-serif;
+      background-color: hsl(0, 0%, 100%);
+      color: #0e0d0c;
+      user-select: none;
+    }
+
+    .menu-icon {
+      font-size: 30px;
+      cursor: pointer;
+      padding: 10px;
+      background-color: #111;
+      color: #FFF;
+    }
+
+    .sidebar {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+      z-index: 1;
+    }
+
+    .sidebar a {
+      padding: 15px 25px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #FDFDFD;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: #575757;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 25px;
+      font-size: 30px;
+      color: #FFF;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      max-width: 320px;
+      margin: 30px auto;
+    }
+
+    .head {
+      text-align: center;
+      font-size: 30px;
+      padding: 10px;
+    }
+
+    button {
+      color: #FDFDFD;
+      background-color: #7243CD;
+      border: 0;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 20px;
+      text-align: center;
+      font-family: 'Rubik', sans-serif;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #402773;
+      cursor: pointer;
+    }
+
+    /* Custom styles for different offices */
+    .workvia .head { color: #FF5733; }
+    .workdesq .head { color: #33FF57; }
+    .sso .head { color: #3357FF; }
+    .karyasthal .head { color: #FF33A1; }
+  </style>
+</head>
+<body>
+  <div class="menu-icon" onclick="openNav()">&#9776;</div>
+  <div id="sidebar" class="sidebar">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
+    <a href="land.html">Homepage</a>
+    <a href="#" id="adminDashboardLink" style="display: none;" onclick="navigateTo('admin-dashboard.html')">Admin Dashboard</a>
+    <a href="#" id="logoutBtn">Logout</a>
+  </div>
+  <div class="container">
+    <div class="head">Welcome to Propclean</div>
+    <button onclick="navigateTo('daily.html')">Daily Tasks</button>
+    <button onclick="navigateTo('reports.html')">See Reports</button>
+  </div>
+  <div id="additional-info" style="display: none;">
+    <h2>Please complete your profile</h2>
+    <label for="office">Office:</label>
+    <select id="office">
+      <option value="workvia">Workvia</option>
+      <option value="workdesq">Workdesq</option>
+      <option value="sso">SSO</option>
+      <option value="karyasthal">Cubispace</option>
+    </select>
+    <button id="save-info">Save</button>
+  </div>
+  <script>
+    function navigateTo(page) {
+      window.location.href = page;
+    }
+
+    function openNav() {
+      document.getElementById("sidebar").style.width = "250px";
+    }
+
+    function closeNav() {
+      document.getElementById("sidebar").style.width = "0";
+    }
+
+    function getUserEmail() {
+      return localStorage.getItem('userEmail');
+    }
+
+    function isAdmin(email) {
+      const adminEmails = ["shanvishukla39@gmail.com", "thomas@propques.com", "amdixit1711@gmail.com", "prashant.m@cubispace.com"];
+      return adminEmails.includes(email);
+    }
+  </script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAn2hwFs7g1StFNAGVbiOxTTcLbuNq1le0",
+      authDomain: "propclean.firebaseapp.com",
+      databaseURL: "https://propclean-default-rtdb.firebaseio.com",
+      projectId: "propclean",
+      storageBucket: "propclean.appspot.com",
+      messagingSenderId: "795234019311",
+      appId: "1:795234019311:web:369566b90b91139164781a",
+      measurementId: "G-CE3LFP4HSJ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        localStorage.setItem('userEmail', user.email);
+        console.log("User UID: ", user.uid);
+        const userRef = ref(database, 'users/' + user.uid);
+        onValue(userRef, (snapshot) => {
+          const userData = snapshot.val();
+          console.log("Snapshot: ", snapshot.val());
+          if (userData) {
+            const userOffice = userData.office;
+            if (isAdmin(user.email)) {
+              document.getElementById("adminDashboardLink").style.display = "block";
+            }
+
+            document.body.classList.add(userOffice);
+
+            let tasksRef;
+            switch (userOffice) {
+              case 'workvia':
+                tasksRef = ref(database, "Workvia");
+                break;
+              case 'workdesq':
+                tasksRef = ref(database, "Daily Tasks");
+                break;
+              case 'sso':
+                tasksRef = ref(database, "sso");
+                break;
+              case 'karyasthal':
+                tasksRef = ref(database, "Karyasthal");
+                break;
+              default:
+                alert('Unknown office');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            fetchAndDisplayTasks(tasksRef);
+          } else {
+            console.error("User data not found for user: ", user.uid);
+            document.getElementById('additional-info').style.display = 'block';
+            document.getElementById('save-info').addEventListener('click', () => {
+              const office = document.getElementById('office').value;
+              set(userRef, {
+                email: user.email,
+                office: office
+              }).then(() => {
+                document.getElementById('additional-info').style.display = 'none';
+                document.body.classList.add(office);
+                if (isAdmin(user.email)) {
+                  document.getElementById("adminDashboardLink").style.display = "block";
+                }
+                let tasksRef;
+                switch (office) {
+                  case 'workvia':
+                    tasksRef = ref(database, "Workvia");
+                    break;
+                  case 'workdesq':
+                    tasksRef = ref(database, "Daily Tasks");
+                    break;
+                  case 'sso':
+                    tasksRef = ref(database, "sso");
+                    break;
+                  case 'karyasthal':
+                    tasksRef = ref(database, "Karyasthal");
+                    break;
+                  default:
+                    alert('Unknown office');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                fetchAndDisplayTasks(tasksRef);
+              }).catch((error) => {
+                console.error("Error saving user data: ", error);
+                alert('Error saving user data.');
+              });
+            });
+          }
+        }, (error) => {
+          console.error("Error fetching user data: ", error);
+          alert('Error fetching user data.');
+          window.location.href = 'index.html';
+        });
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
+
+    function fetchAndDisplayTasks(tasksRef) {
+      const shoppingListEl = document.getElementById("shopping-list");
+      if (!shoppingListEl) {
+        console.error("Element with ID 'shopping-list' not found.");
+        return;
+      }
+
+      onValue(tasksRef, function(snapshot) {
+        if (snapshot.exists()) {
+          let tasksArray = Object.entries(snapshot.val());
+
+          // Sort tasks by time in ascending order
+          tasksArray.sort((a, b) => {
+            const timeA = parseTime(a[1].time);
+            const timeB = parseTime(b[1].time);
+            return timeA - timeB;
+          });
+
+          clearShoppingListEl();
+
+          tasksArray.forEach(function(taskItem) {
+            let taskData = taskItem[1];
+            appendTaskToShoppingListEl(taskItem[0], taskData);
+          });
+        } else {
+          shoppingListEl.innerHTML = "No tasks found";
+        }
+      }, (error) => {
+        console.error("Error fetching tasks: ", error);
+        alert('Error fetching tasks.');
+      });
+    }
+
+    function parseTime(timeString) {
+      if (!timeString) {
+        return Infinity; // Set a very high value for missing times to sort them to the end
+      }
+      const [hours, minutes] = timeString.split(':').map(Number);
+      return hours * 60 + minutes;
+    }
+
+    function clearShoppingListEl() {
+      const shoppingListEl = document.getElementById("shopping-list");
+      if (shoppingListEl) {
+        shoppingListEl.innerHTML = "";
+      }
+    }
+
+    function appendTaskToShoppingListEl(taskId, taskData) {
+      const shoppingListEl = document.getElementById("shopping-list");
+      if (shoppingListEl) {
+        let newEl = document.createElement("li");
+        newEl.textContent = `${taskData.task} - ${taskData.time || 'No time specified'}`;
+        newEl.addEventListener("click", function() {
+          window.location.href = `taskDetails.html?id=${taskId}`;
+        });
+        shoppingListEl.appendChild(newEl);
+      }
+    }
+  </script>
+  <script src="logout.js" type="module"></script>
+  <script src="https://apis.google.com/js/api.js" async defer></script>
+</body>
+</html>

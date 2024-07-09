@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Reports</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .status-complete {
+            color: green;
+        }
+        .status-incomplete {
+            color: red;
+        }
+        .admin-only {
+            display: none;
+        }
+        .admin-only.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Select Office</h1>
+        <select id="officeSelect"></select>
+        <button onclick="loadReports()">Load Reports</button>
+        <div id="reportsContainer" class="table-container"></div>
+        <div id="adminContainer" class="admin-only">
+            <h2>Users in Office</h2>
+            <div id="usersContainer" class="table-container"></div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAn2hwFs7g1StFNAGVbiOxTTcLbuNq1le0",
+            authDomain: "propclean.firebaseapp.com",
+            databaseURL: "https://propclean-default-rtdb.firebaseio.com",
+            projectId: "propclean",
+            storageBucket: "propclean.appspot.com",
+            messagingSenderId: "795234019311",
+            appId: "1:795234019311:web:369566b90b91139164781a",
+            measurementId: "G-CE3LFP4HSJ"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+
+        const adminEmails = ["shanvishukla39@gmail.com", "thomas@propques.com", "amdixit1711@gmail.com","prashant.m@cubispace.com"];
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                const userRef = database.ref('users/' + user.uid);
+                userRef.once('value').then(snapshot => {
+                    const userData = snapshot.val();
+                    if (adminEmails.includes(user.email)) {
+                        populateOfficeSelect(true);
+                        document.getElementById('adminContainer').classList.add('active');
+                    } else {
+                        populateOfficeSelect(false, userData.office);
+                    }
+                });
+            } else {
+                window.location.href = 'index.html'; // Redirect to login if user is not authenticated
+            }
+        });
+
+        function populateOfficeSelect(isAdmin, userOffice) {
+            const officeSelect = document.getElementById('officeSelect');
+            officeSelect.innerHTML = ''; // Clear any existing options
+
+            if (isAdmin) {
+                const offices = ["cubispace", "Workdesq", "Workvia", "sso"];
+                offices.forEach(office => {
+                    const option = document.createElement('option');
+                    option.value = office;
+                    option.textContent = office;
+                    officeSelect.appendChild(option);
+                });
+            } else {
+                const option = document.createElement('option');
+                option.value = userOffice;
+                option.textContent = userOffice;
+                officeSelect.appendChild(option);
+            }
+        }
+
+        function loadReports() {
+            const office = document.getElementById('officeSelect').value;
+            loadTaskReports(office);
+            loadUserReports(office);
+        }
+
+        function loadTaskReports(office) {
+            const reportsContainer = document.getElementById('reportsContainer');
+            reportsContainer.innerHTML = `
+                <h1>${office} Tasks</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Task Name</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Upload Time</th>
+                            <th>Completed By</th>
+                        </tr>
+                    </thead>
+                    <tbody id="taskTableBody"></tbody>
+                </table>
+            `;
+
+            const tasksRef = firebase.database().ref(office);
+            tasksRef.on('value', snapshot => {
+                const tasks = snapshot.val();
+                const taskTableBody = document.getElementById('taskTableBody');
+                taskTableBody.innerHTML = ''; // Clear the table body
+
+                for (const taskId in tasks) {
+                    const task = tasks[taskId];
+                    const row = document.createElement('tr');
+
+                    const taskNameCell = document.createElement('td');
+                    taskNameCell.textContent = task.task;
+                    row.appendChild(taskNameCell);
+
+                    const dateCell = document.createElement('td');
+                    dateCell.textContent = task.time;
+                    row.appendChild(dateCell);
+
+                    const statusCell = document.createElement('td');
+                    statusCell.textContent = task.status;
+                    statusCell.classList.add(task.status.toLowerCase() === 'complete' ? 'status-complete' : 'status-incomplete');
+                    row.appendChild(statusCell);
+
+                    const uploadTimeCell = document.createElement('td');
+                    uploadTimeCell.textContent = task.uploadTime ? new Date(task.uploadTime).toLocaleString() : 'N/A';
+                    row.appendChild(uploadTimeCell);
+
+                    const completedByCell = document.createElement('td');
+                    completedByCell.textContent = task.completedBy || 'N/A';
+                    row.appendChild(completedByCell);
+
+                    taskTableBody.appendChild(row);
+                }
+            });
+        }
+
+        function loadUserReports(office) {
+            const usersContainer = document.getElementById('usersContainer');
+            usersContainer.innerHTML = `
+                <h1>Users in ${office}</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Office</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody"></tbody>
+                </table>
+            `;
+
+            const usersRef = firebase.database().ref('users');
+            usersRef.on('value', snapshot => {
+                const users = snapshot.val();
+                const userTableBody = document.getElementById('userTableBody');
+                userTableBody.innerHTML = ''; // Clear the table body
+
+                for (const userId in users) {
+                    const user = users[userId];
+                    if (user.office.toLowerCase() === office.toLowerCase()) {
+                        const row = document.createElement('tr');
+
+                        const emailCell = document.createElement('td');
+                        emailCell.textContent = user.email;
+                        row.appendChild(emailCell);
+
+                        const officeCell = document.createElement('td');
+                        officeCell.textContent = user.office;
+                        row.appendChild(officeCell);
+
+                        userTableBody.appendChild(row);
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
