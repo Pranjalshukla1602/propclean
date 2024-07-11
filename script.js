@@ -133,33 +133,22 @@ createacctbtn.addEventListener("click", function() {
   office = officeSignupIn.value;
 
   if (validateSignUpInputs(signupEmail, confirmSignupEmail, signupPassword, confirmSignUpPassword, office)) {
-    const emailQuery = ref(database, 'users').orderByChild('email').equalTo(signupEmail);
-    
-    emailQuery.once('value', (snapshot) => {
-      if (snapshot.exists()) {
-        window.alert("Error: An account with the given email ID already exists.");
-      } else {
-        createUserWithEmailAndPassword(auth, signupEmail, signupPassword)
-          .then((userCredential) => {
-            const user = userCredential.user;
-            return set(ref(database, 'users/' + user.uid), {
-              email: signupEmail,
-              office: office
-            });
-          })
-          .then(() => {
-            window.alert("Success! Account created.");
-            window.location.href = "index.html";
-          })
-          .catch((error) => {
-            console.error("Error occurred during sign-up:", error);
-            window.alert("Error occurred. Try again.");
-          });
-      }
-    }).catch((error) => {
-      console.error("Error occurred during email check:", error);
-      window.alert("Error occurred. Try again.");
-    });
+    createUserWithEmailAndPassword(auth, signupEmail, signupPassword)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        return set(ref(database, 'users/' + user.uid), {
+          email: signupEmail,
+          office: office
+        });
+      })
+      .then(() => {
+        window.alert("Success! Account created.");
+        window.location.href = "index.html";
+      })
+      .catch((error) => {
+        console.error("Error occurred during sign-up:", error);
+        window.alert("Error occurred. Try again.");
+      });
   }
 });
 
