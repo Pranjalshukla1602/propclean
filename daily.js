@@ -109,14 +109,17 @@ function clearShoppingListEl() {
     shoppingListEl.innerHTML = "";
 }
 
+
 function appendTaskToShoppingListEl(taskId, taskData) {
     let newEl = document.createElement("li");
     newEl.textContent = `${taskData.task} - ${taskData.time || 'No time specified'}`;
     newEl.addEventListener("click", function() {
-        window.location.href = `taskDetails.html?id=${taskId}`;
+        const office = document.body.className; // Get the office class set on the body
+        window.location.href = `taskDetails.html?id=${taskId}&office=${office}`;
     });
     shoppingListEl.appendChild(newEl);
 }
+
 
 // Initial fetch to ensure data is loaded on page load
 onAuthStateChanged(auth, user => {
