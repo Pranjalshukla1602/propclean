@@ -3,7 +3,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+import { getDatabase, ref, set ,query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -133,21 +133,26 @@ createacctbtn.addEventListener("click", function() {
   office = officeSignupIn.value;
 
   if (validateSignUpInputs(signupEmail, confirmSignupEmail, signupPassword, confirmSignUpPassword, office)) {
+    console.log("Checking if email exists in database...");
     const emailQuery = query(ref(database, 'users'), orderByChild('email'), equalTo(signupEmail));
     get(emailQuery)
       .then((snapshot) => {
         if (snapshot.exists()) {
+          console.log("Email already exists.");
           window.alert("Error: An account with the given email ID already exists.");
         } else {
+          console.log("Email does not exist. Proceeding to create account...");
           createUserWithEmailAndPassword(auth, signupEmail, signupPassword)
             .then((userCredential) => {
               const user = userCredential.user;
+              console.log("User created:", user);
               return set(ref(database, 'users/' + user.uid), {
                 email: signupEmail,
                 office: office
               });
             })
             .then(() => {
+              console.log("User data saved in database.");
               window.alert("Success! Account created.");
               window.location.href = "index.html";
             })
