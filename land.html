@@ -116,10 +116,12 @@
     <h2>Please complete your profile</h2>
     <label for="office">Office:</label>
     <select id="office">
+      <option value="cubispace">Cubispace</option>
       <option value="workvia">Workvia</option>
       <option value="workdesq">Workdesq</option>
-      <option value="sso">SSO</option>
-      <option value="karyasthal">Cubispace</option>
+      <option value="sso">Sapna Sangeeta</option>
+      <option value="worqspot">Worqspot</option>
+      <option value="karyasthal">Karyasthal</option>
     </select>
     <button id="save-info">Save</button>
   </div>
@@ -187,14 +189,20 @@
                 tasksRef = ref(database, "Workvia");
                 break;
               case 'workdesq':
-                tasksRef = ref(database, "Daily Tasks");
+                tasksRef = ref(database, "Workdesq");
                 break;
               case 'sso':
-                tasksRef = ref(database, "sso");
+                tasksRef = ref(database, "Sapna Sangeeta");
                 break;
               case 'karyasthal':
                 tasksRef = ref(database, "Karyasthal");
                 break;
+              case 'cubispace':
+                tasksRef = ref(database, "Cubispace");
+                break; 
+              case 'workqspot':
+                tasksRef = ref(database, "Worqspot");
+                break;  
               default:
                 alert('Unknown office');
                 window.location.href = 'index.html';
@@ -221,14 +229,20 @@
                   case 'workvia':
                     tasksRef = ref(database, "Workvia");
                     break;
+                  case 'cubispace':
+                    tasksRef = ref(database, "Cubispace");
+                    break;
                   case 'workdesq':
-                    tasksRef = ref(database, "Daily Tasks");
+                    tasksRef = ref(database, "Workdesq");
                     break;
                   case 'sso':
-                    tasksRef = ref(database, "sso");
+                    tasksRef = ref(database, "Sapna Sangeeta");
                     break;
                   case 'karyasthal':
                     tasksRef = ref(database, "Karyasthal");
+                    break;
+                  case 'worqspot':
+                    tasksRef = ref(database, "Worqspot");
                     break;
                   default:
                     alert('Unknown office');

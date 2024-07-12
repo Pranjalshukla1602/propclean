@@ -50,17 +50,22 @@ onAuthStateChanged(auth, user => {
                         tasksRef = ref(database, "Workdesq");
                         break;
                     case 'sso':
-                        tasksRef = ref(database, "sso");
+                        tasksRef = ref(database, "Sapna Sangeeta");
                         break;
                     case 'karyasthal':
                         tasksRef = ref(database, "Karyasthal");
+                        break;
+                    case 'cubispace':
+                        tasksRef = ref(database, "Cubispace");
+                        break;
+                    case 'worqspot':
+                        tasksRef = ref(database, "Worqspot");
                         break;
                     default:
                         alert('Unknown office');
                         window.location.href = 'index.html';
                         return;
                 }
-
                 document.body.classList.add(userOffice);
                 fetchAndDisplayTasks(tasksRef);
             } else {
@@ -144,10 +149,16 @@ onAuthStateChanged(auth, user => {
                         tasksRef = ref(database, "Workdesq");
                         break;
                     case 'sso':
-                        tasksRef = ref(database, "sso");
+                        tasksRef = ref(database, "Sapna Sangeeta");
+                        break;
+                    case 'worqspot':
+                        tasksRef = ref(database, "Worqspot");
                         break;
                     case 'karyasthal':
                         tasksRef = ref(database, "Karyasthal");
+                        break;
+                    case 'cubispace':
+                        tasksRef = ref(database, "Cubispace");
                         break;
                     default:
                         alert('Unknown office');

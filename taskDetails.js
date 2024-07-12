@@ -23,10 +23,16 @@ switch (office) {
         taskPath = `Workdesq/${taskId}`;
         break;
     case 'sso':
-        taskPath = `sso/${taskId}`;
+        taskPath = `Sapna Sangeeta/${taskId}`;
         break;
     case 'karyasthal':
         taskPath = `Karyasthal/${taskId}`;
+        break;
+    case 'cubispace':
+        taskPath = `Cubispace/${taskId}`;
+        break;
+    case 'worqspot':
+        taskPath = `Worqspot/${taskId}`;
         break;
     default:
         document.getElementById("task-name").textContent = "Unknown office";

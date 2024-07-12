@@ -146,9 +146,11 @@
                 <label for="office-select">Select Office:</label>
                 <select id="office-select" required>
                     <option value="Cubispace">Cubispace</option>
+                    <option value="Karyasthal">Karyasthal</option>
+                    <option value="Worqspot">Worqspot</option>
                     <option value="Workdesq">Workdesq</option>
                     <option value="Workvia">Workvia</option>
-                    <option value="sso">SSO</option>
+                    <option value="sso">Sapna Sangeeta</option>
                 </select>
                 <label for="task-name">Task Name:</label>
                 <input type="text" id="task-name" required>
@@ -208,7 +210,7 @@
 
         // Function to reset the status of all tasks to 'incomplete'
         async function resetAllTasks() {
-            const nodes = ['Cubispace', 'Daily Tasks', 'Karyasthal', 'Workdesq', 'Workvia', 'sso'];
+            const nodes = ['Cubispace', 'Karyasthal', 'Workdesq', 'Workvia', 'sso','Worqspot'];
 
             for (let node of nodes) {
                 const tasksRef = database.ref(node);
