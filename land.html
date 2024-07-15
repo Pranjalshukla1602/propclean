@@ -251,6 +251,8 @@
     }
     #additional-info {
   display: none; /* Hide by default */
+  justify-content: center;
+  align-items: center;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -410,7 +412,7 @@ button#save-info{
     }
 
     function showPopup() {
-    document.getElementById('additional-info').style.display = 'block';
+    document.getElementById('additional-info').style.display = 'flex';
   }
 
   function hidePopup() {
