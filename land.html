@@ -108,6 +108,7 @@
       font-family: 'Rubik', sans-serif;
       /* text-wrap:nowrap; */
       justify-self: flex-end;
+      transition:all 200ms;
     }
 
     button:hover {
@@ -237,6 +238,13 @@
       font-size:18px;
       font-weight: 600;
     }
+    a{
+      text-decoration-line: none;
+      color:black;
+    }
+    button:active{
+      transform:scale(0.95);
+    }
   </style>
 </head>
 <body>
@@ -262,42 +270,54 @@
         <div class="views">View all</div>
       </div>
       <div class="cats">
-        <div class="cont">
-          <div class="box">
-            <div><img src="home.png"></div>
+        <a href="#">
+          <div class="cont">
+            <div class="box">
+              <div><img src="home.png"></div>
+            </div>
+            <div class="catname">All</div>
           </div>
-          <div class="catname">All</div>
-        </div>
-        <div class="cont">
-          <div class="box">
-            <div><img src="clean.png"></div>
+        </a>
+        <a href="#">
+          <div class="cont">
+            <div class="box">
+              <div><img src="clean.png"></div>
+            </div>
+            <div class="catname">Clean</div>
           </div>
-          <div class="catname">Clean</div>
-        </div>
-        <div class="cont">
-          <div class="box">
-            <div><img src="pest.png"></div>
+        </a>
+        <a href="#">
+          <div class="cont">
+            <div class="box">
+              <div><img src="pest.png"></div>
+            </div>
+            <div class="catname">Pest</div>
           </div>
-          <div class="catname">Pest</div>
-        </div>
-        <div class="cont">
-          <div class="box">
-            <div><img src="budget.png" style="color:blue;"></div>
+        </a>
+        <a href="#">
+          <div class="cont">
+            <div class="box">
+              <div><img src="repair.png"></div>
+            </div>
+            <div class="catname">Repair</div>
           </div>
-          <div class="catname">AMC</div>
-        </div>
-        <div class="cont">
-          <div class="box">
-            <div><img src="repair.png"></div>
+        </a>
+        <a href="#">
+          <div class="cont">
+            <div class="box">
+              <div><img src="food.png"></div>
+            </div>
+            <div class="catname">Food</div>
           </div>
-          <div class="catname">Repair</div>
-        </div>
-        <div class="cont">
-          <div class="box">
-            <div><img src="food.png"></div>
+        </a>
+        <a href="#">
+          <div class="cont">
+            <div class="box">
+              <div><img src="repair.png" style="color:blue;"></div>
+            </div>
+            <div class="catname">AMC</div>
           </div>
-          <div class="catname">Food</div>
-        </div>
+        </a>
       </div>
     </div>
     <div class="bt">
