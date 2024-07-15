@@ -249,6 +249,28 @@
     a:active{
       transform:scale(0.95);
     }
+    #additional-info {
+  display: none; /* Hide by default */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  z-index: 1000; /* Ensure it is above other elements */
+  border-radius: 10px;
+  max-width: 400px;
+  width: 80%;
+}
+
+#additional-info h2 {
+  margin-bottom: 20px;
+}
+
+#additional-info select, #additional-info button {
+  margin-top: 10px;
+}
   </style>
 </head>
 <body>
@@ -364,6 +386,14 @@
       const adminEmails = ["shanvishukla39@gmail.com", "thomas@propques.com", "amdixit1711@gmail.com", "prashant.m@cubispace.com"];
       return adminEmails.includes(email);
     }
+
+    function showPopup() {
+    document.getElementById('additional-info').style.display = 'block';
+  }
+
+  function hidePopup() {
+    document.getElementById('additional-info').style.display = 'none';
+  }
   </script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
@@ -427,62 +457,63 @@
                 return;
             }
 
+
             fetchAndDisplayTasks(tasksRef);
-          } else {
-            console.error("User data not found for user: ", user.uid);
-            document.getElementById('additional-info').style.display = 'block';
-            document.getElementById('save-info').addEventListener('click', () => {
-              const office = document.getElementById('office').value;
-              set(userRef, {
-                email: user.email,
-                office: office
-              }).then(() => {
-                document.getElementById('additional-info').style.display = 'none';
-                document.body.classList.add(office);
-                if (isAdmin(user.email)) {
-                  document.getElementById("adminDashboardLink").style.display = "block";
-                }
-                let tasksRef;
-                switch (office) {
-                  case 'workvia':
-                    tasksRef = ref(database, "Workvia");
-                    break;
-                  case 'cubispace':
-                    tasksRef = ref(database, "Cubispace");
-                    break;
-                  case 'workdesq':
-                    tasksRef = ref(database, "Workdesq");
-                    break;
-                  case 'sso':
-                    tasksRef = ref(database, "Sapna Sangeeta");
-                    break;
-                  case 'karyasthal':
-                    tasksRef = ref(database, "Karyasthal");
-                    break;
-                  case 'worqspot':
-                    tasksRef = ref(database, "Worqspot");
-                    break;
-                  default:
-                    alert('Unknown office');
-                    window.location.href = 'index.html';
-                    return;
-                }
-                fetchAndDisplayTasks(tasksRef);
-              }).catch((error) => {
-                console.error("Error saving user data: ", error);
-                alert('Error saving user data.');
-              });
+        } else {
+          console.error("User data not found for user: ", user.uid);
+          showPopup();
+          document.getElementById('save-info').addEventListener('click', () => {
+            const office = document.getElementById('office').value;
+            set(userRef, {
+              email: user.email,
+              office: office
+            }).then(() => {
+              hidePopup();
+              document.body.classList.add(office);
+              if (isAdmin(user.email)) {
+                document.getElementById("adminDashboardLink").style.display = "block";
+              }
+              let tasksRef;
+              switch (office) {
+                case 'workvia':
+                  tasksRef = ref(database, "Workvia");
+                  break;
+                case 'cubispace':
+                  tasksRef = ref(database, "Cubispace");
+                  break;
+                case 'workdesq':
+                  tasksRef = ref(database, "Workdesq");
+                  break;
+                case 'sso':
+                  tasksRef = ref(database, "Sapna Sangeeta");
+                  break;
+                case 'karyasthal':
+                  tasksRef = ref(database, "Karyasthal");
+                  break;
+                case 'worqspot':
+                  tasksRef = ref(database, "Worqspot");
+                  break;
+                default:
+                  alert('Unknown office');
+                  window.location.href = 'index.html';
+                  return;
+              }
+              fetchAndDisplayTasks(tasksRef);
+            }).catch((error) => {
+              console.error("Error saving user data: ", error);
+              alert('Error saving user data.');
             });
-          }
-        }, (error) => {
-          console.error("Error fetching user data: ", error);
-          alert('Error fetching user data.');
-          window.location.href = 'index.html';
-        });
-      } else {
+          });
+        }
+      }, (error) => {
+        console.error("Error fetching user data: ", error);
+        alert('Error fetching user data.');
         window.location.href = 'index.html';
-      }
-    });
+      });
+    } else {
+      window.location.href = 'index.html';
+    }
+  });
 
     function fetchAndDisplayTasks(tasksRef) {
       const shoppingListEl = document.getElementById("shopping-list");
