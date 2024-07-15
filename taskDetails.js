@@ -51,6 +51,15 @@ onValue(taskRef, (snapshot) => {
         const taskStatus = taskData.status ? taskData.status.toLowerCase() : 'unknown';
         console.log('Task status:', taskStatus);
 
+        const uploadTime = new Date(taskData.uploadTime);
+        const currentTime = new Date();
+        const timeDifference = (currentTime - uploadTime) / (1000 * 60 * 60); // Time difference in hours
+
+        if (timeDifference >= 20 && taskStatus === "complete") {
+            update(taskRef, { status: "incomplete" });
+            taskData.status = "incomplete";
+        }
+
         document.getElementById("task-name").textContent = `Task: ${taskData.task}`;
         document.getElementById("task-time").textContent = `Time: ${taskData.time}`;
         const statusButton = document.getElementById("status-button");
@@ -59,19 +68,19 @@ onValue(taskRef, (snapshot) => {
         const newButton = statusButton.cloneNode(true);
         statusButton.parentNode.replaceChild(newButton, statusButton);
 
-        if (taskStatus === "incomplete") {
+        if (taskData.status.toLowerCase() === "incomplete") {
             newButton.textContent = "Mark as Complete";
             newButton.classList.remove("completed");
             newButton.disabled = false;
             newButton.addEventListener("click", () => {
                 window.location.href = `upload.html?id=${taskId}&office=${office}`;
             });
-        } else if (taskStatus === "complete") {
+        } else if (taskData.status.toLowerCase() === "complete") {
             newButton.textContent = "Completed";
             newButton.classList.add("completed");
             newButton.disabled = true;
         } else {
-            console.warn("Unknown task status:", taskStatus);
+            console.warn("Unknown task status:", taskData.status);
         }
     } else {
         document.getElementById("task-details").textContent = "Task not found";
@@ -91,3 +100,4 @@ onAuthStateChanged(auth, (user) => {
         window.location.href = 'index.html'; // Redirect to login page if not authenticated
     }
 });
+
