@@ -54,7 +54,7 @@ onValue(taskRef, (snapshot) => {
         const uploadTime = new Date(taskData.uploadTime);
         const currentTime = new Date();
         const timeDifference = (currentTime - uploadTime) / (1000 * 60 * 60); // Time difference in hours
-
+        console.log(timeDifference);
         if (timeDifference >= 20 && taskStatus === "complete") {
             update(taskRef, { status: "incomplete" });
             taskData.status = "incomplete";

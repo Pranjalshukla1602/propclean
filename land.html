@@ -32,20 +32,27 @@
       padding-left:20px;
       opacity:90%;
       color: #335ef7;
+      display:inline-block;
+      position:fixed;
     }
 
     .sidebar {
       height: 100%;
-      width:200px;
+      width:20%;
+      min-width:180px;
       position: fixed;
       top: 0;
       left: -1;
       background-color:white;
       box-shadow: rgba(51, 94, 247, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
       overflow-x: hidden;
+      transform: translateX(-100%);
       transition: 0.5s;
       padding-top: 60px;
       z-index: 1;
+    }
+    .sidebar.open {
+      transform: translateX(0);
     }
 
     .sidebar a {
@@ -82,8 +89,12 @@
     .container {
       display: flex;
       flex-direction: column;
-      padding:0 45px;
-      margin:0;
+      justify-content:flex-start;
+      row-gap:5px;
+      padding:0px 45px;
+      max-width:450px;
+      margin:auto;
+      height:100vh;
     }
 
     button {
@@ -91,11 +102,12 @@
       background-color: #7243CD;
       border: 0;
       padding: 15px;
-      border-radius: 8px;
-      font-size: 20px;
+      border-radius: 12px;
+      font-size: 1rem;
       text-align: center;
       font-family: 'Rubik', sans-serif;
-      margin-top: 10px;
+      /* text-wrap:nowrap; */
+      justify-self: flex-end;
     }
 
     button:hover {
@@ -117,45 +129,56 @@
       flex-direction:row;
       justify-content: space-between;
       column-gap: 10px;
+      margin-top:60px;
     }
     div.head{
       font-size: 25px;
       font-weight: 800;
     }
     div.subhead{
-      font-size:15px;
+      font-size:16px;
       font-weight:500;
       margin-top: 2px;
     }
     img.home{
       width:100%;
-      max-width:300px;
-      height:100%;
-      max-height:220px;
-      margin:auto;
+      max-width:450px;
+      min-height:220px;
+      margin:0 auto;
     }
     img.user{
       width:60px;
       height:60px;
       margin-top: -7px;
     }
+    div.category{
+      display:flex;
+      flex-direction:column;
+    }
     div.cathead{
       display:flex;
       flex-direction: row;
       justify-content: space-between;
+      align-items: center;
+      column-gap: 20px;
+      text-wrap:nowrap;
     }
     div.cathead .choose{
       font-weight:800;
+      font-size:18px;
     }
     div.cathead .views{
       color:rgba(51, 94, 247);
       font-weight:800;
+      font-size:16px;
       cursor:pointer;
     }
     div.cathead .views:hover{
       color:blue;
     }
     div.cats{
+      width:90%;
+      margin:auto;
       display:grid;
       grid-template-rows: repeat(2,1fr);
       grid-template-columns: repeat(3,1fr);
@@ -163,18 +186,53 @@
       align-items: center;
       place-content: center;
       place-items: center;
-      row-gap:20px;
-      margin-top: 20px;
+      row-gap:15px;
+      column-gap: 20px;
+      margin-top:15px;
     }
     div.cats div.box{
       border:2px solid lightgray;
       padding:13px;
       box-shadow: rgb(51,94,247,0.2) 0px 10px 36px 0px;
       border-radius:100%;
+      max-width:60px;
     }
     div.box img{
       width:30px;
       height:30px
+    }
+    div.bt{
+      max-width:450px;
+      display:flex;
+      flex-direction: row;
+      column-gap: 20px;
+      justify-content: center;
+      align-items:center;
+      margin-top:30px;
+    }
+    button.daily{
+      background-color: rgba(51, 94, 247);
+      color:white;
+      font-weight: 700;
+      width:47%;
+    }
+    button.repo{
+      background-color: white;
+      color:rgba(51, 94, 247);
+      border:2px solid rgba(51, 94, 247);
+      font-weight:700;
+      width:53%;
+    }
+    div.cont{
+      display:flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      row-gap: 5px;
+    }
+    div.catname{
+      font-size:18px;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -183,7 +241,7 @@
   <div id="sidebar" class="sidebar">
     <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
     <a href="land.html"><img src="user.png">Homepage</a>
-    <a href="#" id="adminDashboardLink" style="display: none;" onclick="navigateTo('admin-dashboard.html')">Admin Dashboard</a>
+    <a href="#" id="adminDashboardLink" style="display: none; text-wrap: wrap;" onclick="navigateTo('admin-dashboard.html')"><img src="admin-panel.png">Admin Dashboard</a>
     <a href="#" id="logoutBtn"><img src="logout.png">Logout</a>
   </div>
   <div class="container">
@@ -201,34 +259,48 @@
         <div class="views">View all</div>
       </div>
       <div class="cats">
-        <div class="box">
-          <div><img src="home.png"></div>
-          <div></div>
+        <div class="cont">
+          <div class="box">
+            <div><img src="home.png"></div>
+          </div>
+          <div class="catname">All</div>
         </div>
-        <div class="box">
-          <div><img src="clean.png"></div>
-          <div></div>
+        <div class="cont">
+          <div class="box">
+            <div><img src="clean.png"></div>
+          </div>
+          <div class="catname">Clean</div>
         </div>
-        <div class="box">
-          <div><img src="pest.png"></div>
-          <div></div>
+        <div class="cont">
+          <div class="box">
+            <div><img src="pest.png"></div>
+          </div>
+          <div class="catname">Pest</div>
         </div>
-        <div class="box">
-          <div><img src="laundry.png"></div>
-          <div></div>
+        <div class="cont">
+          <div class="box">
+            <div><img src="budget.png" style="color:blue;"></div>
+          </div>
+          <div class="catname">AMC</div>
         </div>
-        <div class="box">
-          <div><img src="repair.png"></div>
-          <div></div>
+        <div class="cont">
+          <div class="box">
+            <div><img src="repair.png"></div>
+          </div>
+          <div class="catname">Repair</div>
         </div>
-        <div class="box">
-          <div><img src="food.png"></div>
-          <div></div>
+        <div class="cont">
+          <div class="box">
+            <div><img src="food.png"></div>
+          </div>
+          <div class="catname">Food</div>
         </div>
       </div>
     </div>
-    <button onclick="navigateTo('daily.html')">Daily Tasks</button>
-    <button onclick="navigateTo('reports.html')">See Reports</button>
+    <div class="bt">
+      <button onclick="navigateTo('daily.html')" class="daily">Daily Tasks</button>
+    <button onclick="navigateTo('reports.html')" class="repo">See Reports</button>
+    </div>
   </div>
   <div id="additional-info" style="display: none;">
     <h2>Please complete your profile</h2>
@@ -248,12 +320,13 @@
       window.location.href = page;
     }
 
+   
     function openNav() {
-      document.getElementById("sidebar").style.width = "250px";
+      document.getElementById("sidebar").classList.add("open");
     }
 
     function closeNav() {
-      document.getElementById("sidebar").style.width = "0";
+      document.getElementById("sidebar").classList.remove("open");
     }
 
     function getUserEmail() {
