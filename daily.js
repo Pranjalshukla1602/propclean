@@ -23,6 +23,43 @@ const auth = getAuth();
 
 const shoppingListEl = document.getElementById("shopping-list");
 
+function showShimmerEffect() {
+    const shimmerCount = 5; // Number of shimmer placeholders
+    shoppingListEl.innerHTML = "";
+    for (let i = 0; i < shimmerCount; i++) {
+      const shimmerEl = document.createElement("li");
+      shimmerEl.className = "shimmer";
+  
+      const shimmerImg = document.createElement("div");
+      shimmerImg.style.width = "95%";
+      shimmerImg.style.height = "160px";
+      shimmerImg.style.marginTop = "5px";
+  
+      const shimmerTextContainer = document.createElement("div");
+      shimmerTextContainer.style.width = "95%";
+      shimmerTextContainer.style.height = "140px";
+      shimmerTextContainer.style.display = "flex";
+      shimmerTextContainer.style.flexDirection = "column";
+      shimmerTextContainer.style.justifyContent = "center";
+      shimmerTextContainer.style.alignItems = "center";
+  
+      for (let j = 0; j < 3; j++) {
+        const shimmerText = document.createElement("span");
+        shimmerTextContainer.appendChild(shimmerText);
+      }
+  
+      shimmerEl.appendChild(shimmerImg);
+      shimmerEl.appendChild(shimmerTextContainer);
+  
+      shoppingListEl.appendChild(shimmerEl);
+    }
+  }
+  
+  function hideShimmerEffect() {
+    const shimmerEls = document.querySelectorAll(".shimmer");
+    shimmerEls.forEach(shimmerEl => shimmerEl.remove());
+  }
+
 function isAdmin(email) {
   const adminEmails = ["shanvishukla39@gmail.com", "thomas@propques.com", "amdixit1711@gmail.com", "prashant.m@cubispace.com"];
   return adminEmails.includes(email);
@@ -79,28 +116,34 @@ onAuthStateChanged(auth, user => {
 });
 
 function fetchAndDisplayTasks(tasksRef) {
+    showShimmerEffect(); // Show shimmer effect while data is loading
+  
     onValue(tasksRef, function(snapshot) {
-        if (snapshot.exists()) {
-            let tasksArray = Object.entries(snapshot.val());
-
-            // Sort tasks by time in ascending order
-            tasksArray.sort((a, b) => {
-                const timeA = parseTime(a[1].time);
-                const timeB = parseTime(b[1].time);
-                return timeA - timeB;
-            });
-
-            clearShoppingListEl();
-
-            tasksArray.forEach(function(taskItem) {
-                let taskData = taskItem[1];
-                appendTaskToShoppingListEl(taskItem[0], taskData);
-            });
-        } else {
-            shoppingListEl.innerHTML = "No tasks found";
-        }
+      hideShimmerEffect(); // Hide shimmer effect once data is loaded
+  
+      if (snapshot.exists()) {
+        let tasksArray = Object.entries(snapshot.val());
+  
+        // Sort tasks by time in ascending order
+        tasksArray.sort((a, b) => {
+          const timeA = parseTime(a[1].time);
+          const timeB = parseTime(b[1].time);
+          return timeA - timeB;
+        });
+  
+        clearShoppingListEl();
+  
+        tasksArray.forEach(function(taskItem) {
+          let taskData = taskItem[1];
+          appendTaskToShoppingListEl(taskItem[0], taskData);
+        });
+      } else {
+        shoppingListEl.innerHTML = "No tasks found";
+      }
     });
-}
+  }
+
+
 
 function parseTime(timeString) {
     if (!timeString) {
@@ -114,58 +157,6 @@ function clearShoppingListEl() {
     shoppingListEl.innerHTML = "";
 }
 
-
-// function appendTaskToShoppingListEl(taskId, taskData) {
-//     let newEl = document.createElement("li");
-
-//     // Create image element for the task
-//     let imgEl = document.createElement("img");
-//     imgEl.alt = taskData.task; 
-//     imgEl.style.width = "40%";
-//     imgEl.style.height = "200px";
-//     imgEl.style.marginRight = "10px"; 
-
-//     // Set image source based on taskData.time
-//     if (taskData.time === "07:00") {
-//         imgEl.src = "homemain.png"; 
-//     } else if (taskData.time === "9:00") {
-//         imgEl.src = "homemain.png"; 
-//     } else if (taskData.time === "9:30") {
-//         imgEl.src = "homemain.png"; 
-//     } 
-// else if (taskData.time === "10:00") {
-//     imgEl.src = "homemain.png"; 
-// }
-// else if (taskData.time === "12:00") {
-//     imgEl.src = "homemain.png"; 
-// }
-// else if (taskData.time === "13:30") {
-//     imgEl.src = "homemain.png"; 
-// }
-// else if (taskData.time === "14:00") {
-//     imgEl.src = "homemain.png"; 
-// }
-// else if (taskData.time === "14:30") {
-//     imgEl.src = "homemain.png"; 
-// }
-//     else {
-//         imgEl.src = "homemain.png"; 
-//     }
-
-//     let textEl = document.createElement("span");
-//     textEl.textContent = `${taskData.task} - ${taskData.time || 'No time specified'} - ${taskData.status}`;
-
-//     // Append image and text to the list item
-//     newEl.appendChild(imgEl);
-//     newEl.appendChild(textEl);
-
-//     newEl.addEventListener("click", function() {
-//         const office = document.body.className; // Get the office class set on the body
-//         window.location.href = `taskDetails.html?id=${taskId}&office=${office}`;
-//     });
-
-//     shoppingListEl.appendChild(newEl);
-// }
 
 function appendTaskToShoppingListEl(taskId, taskData) {
     let newEl = document.createElement("li");
@@ -354,3 +345,4 @@ onAuthStateChanged(auth, user => {
         window.location.href = 'index.html';
     }
 });
+

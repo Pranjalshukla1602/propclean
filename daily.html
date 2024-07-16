@@ -131,6 +131,9 @@
       margin-top:20px;
       max-width:450px;
     }
+    li:hover{
+      transform:scale(0.95);
+    }
 
     li {
       background-color: #FFF;
@@ -142,6 +145,7 @@
       height:330px;
       display:flex;
       flex-direction:row;
+      transition:all 200ms ease-in-out;
     }
 
     div.line{
@@ -164,6 +168,48 @@
         margin-top: 8px;
       }
     }
+
+    /* Shimmer effect styles */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background: #f6f7f8;
+  background-image: linear-gradient(90deg, #f6f7f8 25%, #e9ecef 50%, #f6f7f8 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer li {
+  background-color: #FFF;
+  border-radius: 8px;
+  width: 100%;
+  height: 330px;
+  margin: 10px 0;
+}
+
+.shimmer img {
+  width: 95%;
+  height: 160px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.shimmer span {
+  display: block;
+  height: 20px;
+  margin-top: 10px;
+  width: 80%;
+  background-color: #e0e0e0;
+}
   </style>
 </head>
 <body>
