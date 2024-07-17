@@ -57,7 +57,7 @@ onValue(taskRef, (snapshot) => {
         console.log(uploadTime);
         console.log(currentTime);
         console.log(timeDifference);
-        if (timeDifference >= 10 && taskStatus === "complete") {
+        if (timeDifference >= 15 && taskStatus === "complete") {
             update(taskRef, { status: "incomplete" });
             taskData.status = "incomplete";
         }

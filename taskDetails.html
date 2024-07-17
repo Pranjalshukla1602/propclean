@@ -181,7 +181,7 @@
                 document.getElementById("task-time").textContent = `Time: ${taskData.time}`;
                 const statusButton = document.getElementById("status-button");
 
-                // Check if 20 hours have passed since uploadTime
+                // Check if 15 hours have passed since uploadTime
                 const uploadTime = new Date(taskData.uploadTime);
                 const currentTime = new Date();
                 const hoursPassed = (currentTime - uploadTime) / (1000 * 60 * 60);
