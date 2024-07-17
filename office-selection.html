@@ -19,107 +19,174 @@
     .menu-icon {
       font-size: 30px;
       cursor: pointer;
-      padding: 10px;
-      background-color: #111;
-      color: #FFF;
+      padding: 15px;
+      padding-left:20px;
+      opacity:90%;
+      color: #335ef7;
+      display:inline-block;
+      position:relative;
     }
 
     .sidebar {
       height: 100%;
-      width: 0;
+      width:20%;
+      min-width:220px;
       position: fixed;
       top: 0;
-      left: 0;
-      background-color: #111;
+      left: -1;
+      background-color:white;
+      box-shadow: rgba(51, 94, 247, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
       overflow-x: hidden;
+      transform: translateX(-100%);
       transition: 0.5s;
       padding-top: 60px;
       z-index: 1;
     }
+    .sidebar.open {
+      transform: translateX(0);
+    }
 
     .sidebar a {
-      padding: 15px 25px;
+      padding: 15px 35px;
       text-decoration: none;
       font-size: 25px;
-      color: #FDFDFD;
+      color: #111;
       display: block;
-      transition: 0.3s;
+      transition:all 200ms ease-in-out;
+      text-wrap: nowrap;
     }
 
     .sidebar a:hover {
-      background-color: #575757;
+      background-color: rgba(51, 94, 247,0.7);
+      color:white;
     }
 
-    .close-btn {
+    .sidebar a.close-btn {
+      border:none;
       position: absolute;
-      top: 10px;
-      right: 25px;
+      margin-bottom: 20px;
+      top: 15px;
+      right: 10px;
       font-size: 30px;
-      color: #FFF;
+      color:red;
+      border-radius: 99%;
+      padding: 6px 15px;
+      transition: all 100ms ease-in-out;
+    }
+    .sidebar a.close-btn:hover{
+      background-color: red;
+      color:white;
+    }
+    .sidebar a img{
+      width:18px;
+      height:18px;
+      margin-right: 8px;
     }
 
     .container {
       display: flex;
       flex-direction: column;
-      max-width: 320px;
+      max-width: 400px;
+      width:80%;
       margin: 30px auto;
-      padding: 10px;
+      margin-bottom:10px;
+      padding: 15px;
       background: white;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-
-    .head {
+    div.head {
       text-align: center;
       font-size: 30px;
       padding: 10px;
+      color:rgba(19, 37, 104, 0.95);
+      font-weight:700;
+      margin-bottom:15px;
     }
-
     button {
       color: #FDFDFD;
-      background-color: #7243CD;
-      border: 0;
-      padding: 15px;
+      background-color:#335ef7;
+      padding: 10px 2px;
+      width:140px;
+      border:none;
       border-radius: 8px;
       font-size: 20px;
+      font-weight:600;
+      margin:0 auto;
       text-align: center;
       font-family: 'Rubik', sans-serif;
       margin-top: 10px;
+      cursor: pointer;
+      transition: all 50ms ease-in-out;
     }
 
     button:hover {
-      background-color: #402773;
-      cursor: pointer;
+      background-color:rgba(19, 37, 104, 0.95);
+    }
+    button:active{
+      transform:scale(0.98);
     }
 
     select {
+      width:170px;
+      text-align:center;
       padding: 10px;
       font-size: 18px;
-      border-radius: 5px;
-      border: 1px solid #ddd;
+      border-radius: 30px;
+      background-color: #f9f9ff;
+      border: 2px solid #f9f9ff;
+      box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+      margin:0 auto;
       margin-bottom: 10px;
+      margin-top:10px;
+      transition:all 300ms ease;
+    }
+    select:focus{
+      border-color: #335ef7;
+      outline: none;
+    }
+    select:hover{
+      border-color: rgba(19, 37, 104, 0.95);
     }
 
     ul {
       list-style-type: none;
       padding: 0;
+      display:flex;
+      flex-direction:column;
+      margin-top:30px;
+      justify-content: center;
+      align-items: center;
     }
 
     li {
+      width:90%;
       background-color: #FFF;
       margin: 10px 0;
-      padding: 10px;
+      padding: 20px 10px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       display: flex;
       align-items: center;
       cursor: pointer;
+      color:#0e0d0c;
+      font-weight:500;
+      font-size:20px;
+      transition:all 200ms ease-in-out;
+    }
+    li:hover{
+      transform:scale(1.04);
+    }
+    li:active{
+      transform:scale(1.0);
     }
 
     li input[type="radio"] {
       margin-right: 10px;
     }
-
+    li input[type="radio"]:hover {
+      border:8px solid  rgba(19, 37, 104, 0.95);
+    }
     @media (max-width: 600px) {
       .container {
         padding: 10px;
@@ -142,10 +209,9 @@
   <div class="menu-icon" onclick="openNav()">&#9776;</div>
   <div id="sidebar" class="sidebar">
     <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
-    <a href="land.html">Home</a>
-    <a href="daily.html">Daily Tasks</a>
-    <a href="admin-dashboard.html" id="adminDashboardLink" style="display: none;">Admin Dashboard</a>
-    <a href="#" id="logoutBtn">Logout</a>
+    <a href="land.html"><img src="user.png">Homepage</a>
+    <a href="#" id="adminDashboardLink" style="display: none; text-wrap: wrap;" onclick="navigateTo('admin-dashboard.html')"><img src="admin-panel.png">Admin Dashboard</a>
+    <a href="#" id="logoutBtn"><img src="logout.png">Logout</a>
   </div>
   <div class="container">
     <div class="head">Select Office</div>
@@ -157,7 +223,7 @@
       <option value="Sapna Sangeeta">Sapna Sangeeta</option>
       <option value="Karyasthal">Karyasthal</option>
     </select>
-    <button onclick="loadOfficeTasks()">Load Daily Tasks</button>
+    <button onclick="loadOfficeTasks()">Load Tasks</button>
     <ul id="office-tasks"></ul>
   </div>
   <script type="module">
@@ -181,18 +247,32 @@
     const auth = getAuth(app);
 
     window.openNav = function() {
-      document.getElementById("sidebar").style.width = "250px";
+      document.getElementById("sidebar").classList.add("open");
     }
 
     window.closeNav = function() {
-      document.getElementById("sidebar").style.width = "0";
+      document.getElementById("sidebar").classList.remove("open");
     }
 
+    // function navigateTo(page) {
+    //   window.location.href = page;
+    // }
+
+   
+    // function openNav() {
+    //   document.getElementById("sidebar").classList.add("open");
+    // }
+
+    // function closeNav() {
+    //   document.getElementById("sidebar").classList.remove("open");
+    // }
+
+
     window.loadOfficeTasks = function() {
-      const office = document.getElementById('officeSelect').value;
-      const tasksRef = ref(database, office);
-      fetchAndDisplayTasks(tasksRef, office);
-    }
+  const office = document.getElementById('officeSelect').value;
+  const tasksRef = ref(database, office);
+  fetchAndDisplayTasks(tasksRef, office);
+}
 
     function fetchAndDisplayTasks(tasksRef, office) {
       const officeTasksEl = document.getElementById("office-tasks");
