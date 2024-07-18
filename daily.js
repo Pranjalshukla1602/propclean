@@ -253,33 +253,33 @@ function appendTaskToShoppingListEl(taskId, taskData) {
     timeDetailEl.style.marginTop = "8px";
     timeDetailEl.style.width = "80%";
 
-    let statusEl = document.createElement("span");
-    statusEl.textContent=taskData.status;
-    statusEl.style.display = "inline-block";
-    statusEl.style.padding = "5px 8px";
-    statusEl.style.borderRadius = "5px";
-    statusEl.style.position = "absolute";
-    statusEl.style.bottom = "10px";
-    statusEl.style.right = "5px";
-    statusEl.style.fontSize = "20px";
-    statusEl.style.fontWeight = "700";
-    statusEl.style.color = "white";
-    if (taskData.status.toLowerCase() === "complete") {
-        statusEl.style.backgroundColor = "green";
-    } else if (taskData.status.toLowerCase() === "incomplete") {
-        statusEl.style.backgroundColor = "red";
-    } else {
-        statusEl.style.backgroundColor = "grey"; // Default color for other statuses
-    }
-    statusEl.style.margin = "0 auto";
-    statusEl.style.marginTop = "8px";
+    // let statusEl = document.createElement("span");
+    // statusEl.textContent=taskData.status;
+    // statusEl.style.display = "inline-block";
+    // statusEl.style.padding = "5px 8px";
+    // statusEl.style.borderRadius = "5px";
+    // statusEl.style.position = "absolute";
+    // statusEl.style.bottom = "10px";
+    // statusEl.style.right = "5px";
+    // statusEl.style.fontSize = "20px";
+    // statusEl.style.fontWeight = "700";
+    // statusEl.style.color = "white";
+    // if (taskData.status.toLowerCase() === "complete") {
+    //     statusEl.style.backgroundColor = "green";
+    // } else if (taskData.status.toLowerCase() === "incomplete") {
+    //     statusEl.style.backgroundColor = "red";
+    // } else {
+    //     statusEl.style.backgroundColor = "grey"; // Default color for other statuses
+    // }
+    // statusEl.style.margin = "0 auto";
+    // statusEl.style.marginTop = "8px";
 
 
     // Append task details to the container
     textContainerEl.appendChild(taskDescE1);
     textContainerEl.appendChild(taskDetailEl);
     textContainerEl.appendChild(timeDetailEl);
-    textContainerEl.appendChild(statusEl);
+    // textContainerEl.appendChild(statusEl);
 
     // Append image and text container to the list item
     newEl.appendChild(imgEl);
