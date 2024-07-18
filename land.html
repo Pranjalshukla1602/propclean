@@ -227,6 +227,7 @@
       border:2px solid rgba(51, 94, 247);
       font-weight:700;
       width:50%;
+      display:none;
     }
     div.cont{
       display:flex;
@@ -452,8 +453,12 @@ button#save-info{
             const userOffice = userData.office;
             if (isAdmin(user.email)) {
               document.getElementById("adminDashboardLink").style.display = "block";
+              document.getElementById("logoutBtn").style.display = "block"; // Assuming logout button should also be displayed for admins
+              document.querySelector("button.repo").style.display = "block";
+            } else {
+              document.getElementById("adminDashboardLink").style.display = "none";
+              document.getElementById("logoutBtn").style.display = "block"; // Assuming logout button should be displayed for non-admins
             }
-
             document.body.classList.add(userOffice);
 
             let tasksRef;

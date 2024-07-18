@@ -302,10 +302,9 @@ onAuthStateChanged(auth, user => {
             const userData = snapshot.val();
             if (userData) {
                 const userOffice = userData.office;
-
                 if (isAdmin(user.email)) {
                     document.getElementById("adminDashboardLink").style.display = "block";
-                    document.getElementById("adminOfficeSelectionBtn").style.display = "block";
+                    document.getElementById("adminOfficeSelectionBtn").textContent = userOffice;
                 }
 
                 let tasksRef;
