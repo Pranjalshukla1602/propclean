@@ -13,53 +13,77 @@
             background-color: hsl(0, 0%, 96%);
             color: #0e0d0c;
             user-select: none;
+            height:100vh;
         }
 
         .menu-icon {
-            font-size: 30px;
-            cursor: pointer;
-            padding: 10px;
-        }
+      font-size: 30px;
+      cursor: pointer;
+      padding: 15px;
+      padding-left:20px;
+      opacity:90%;
+      color: #335ef7;
+      display:inline-block;
+      position:relative;
+    }
 
-        .sidebar {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: #111;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-            z-index: 1;
-        }
+    .sidebar {
+      height: 100%;
+      width:20%;
+      min-width:220px;
+      position: fixed;
+      top: 0;
+      left: -1;
+      background-color:white;
+      box-shadow: rgba(51, 94, 247, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+      overflow-x: hidden;
+      transform: translateX(-100%);
+      transition: 0.5s;
+      padding-top: 60px;
+      z-index: 1;
+    }
+    .sidebar.open {
+      transform: translateX(0);
+    }
 
-        .sidebar a {
-            padding: 15px 25px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #FDFDFD;
-            display: block;
-            transition: 0.3s;
-        }
+    .sidebar a {
+      padding: 15px 35px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #111;
+      display: block;
+      transition:all 200ms ease-in-out;
+      text-wrap: nowrap;
+    }
 
-        .sidebar a:hover {
-            background-color: #575757;
-        }
+    .sidebar a:hover {
+      background-color: rgba(51, 94, 247,0.7);
+      color:white;
+    }
 
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 25px;
-            font-size: 30px;
-        }
-
+    .sidebar a.close-btn {
+      border:none;
+      position: absolute;
+      margin-bottom: 20px;
+      top: 15px;
+      right: 10px;
+      font-size: 30px;
+      color:red;
+      border-radius: 99%;
+      padding: 6px 15px;
+      transition: all 100ms ease-in-out;
+    }
+    .sidebar a.close-btn:hover{
+      background-color: red;
+      color:white;
+    }
         #task-details {
             display: flex;
             flex-direction: column;
-            max-width: 320px;
+            max-width: 400px;
+            width:80%;
             margin: 30px auto;
-            padding: 20px;
+            padding: 10px 10px;
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -67,7 +91,7 @@
 
         button {
             color: #FDFDFD;
-            background-color: #7243CD;
+            background-color: #fe5051;
             border: 0;
             padding: 15px;
             border-radius: 8px;
@@ -79,16 +103,12 @@
         }
 
         button:hover {
-            background-color: #402773;
+            background-color: #f50100;
             cursor: pointer;
         }
 
         .completed {
-            background-color: green;
-        }
-
-        .completed:hover {
-            background-color: darkgreen;
+            background-color:#335EF7;
         }
 
         .head {
@@ -101,19 +121,53 @@
             text-decoration: none;
             color: #FDFDFD;
         }
+        a img{
+      width:18px;
+      height:18px;
+      margin-right: 8px;
+    }
+    a{
+      text-decoration-line: none;
+      color:black;
+    }
+    a:active{
+      transform:scale(0.95);
+    }
+    h1.head{
+        background-color: #EAEFFE;
+        color:#335EF7;
+        font-size:20px;
+        margin:0 auto;
+        width:120px;
+        border-radius: 5px;
+    }
+    span.head1{
+        background-color: #EAEFFE;
+        color:#335EF7;
+        font-size:20px;
+        width:50px;
+        text-align: center;
+        padding:4px 8px;
+        font-weight: 500;
+        border-radius: 5px;
+        margin-top:15px;
+    }
+    
     </style>
 </head>
 <body>
     <div class="menu-icon" onclick="openNav()">&#9776;</div>
-    <div id="sidebar" class="sidebar">
-        <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
-        <a href="land.html">Homepage</a>
-        <a href="#" id="logoutBtn">Logout</a>
-    </div>
+  <div id="sidebar" class="sidebar">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
+    <a href="land.html"><img src="user.png">Homepage</a>
+    <a href="#" id="adminDashboardLink" style="display: none; text-wrap: wrap;" onclick="navigateTo('admin-dashboard.html')"><img src="admin-panel.png">Admin Dashboard</a>
+    <a href="#" id="logoutBtn"><img src="logout.png">Logout</a>
+  </div>
+  <h1 class="head">Task Details</h1>
     <div id="task-details">
-        <h1>Task Details</h1>
-        <p id="task-name">Loading...</p>
-        <p id="task-time"></p>
+        <img id="task-image" src="" alt="Task Image" style="width: 100%; height: 200px; border-radius: 8px; object-fit: cover;margin:0 auto; box-shadow: 4px 4px 15px 0px rgb(51, 94, 247, 0.2);">
+        <span class="head1">Task</span><p id="task-name"></p>
+        <span class="head1">Time</span><p id="task-time"></p>
         <button id="status-button">Mark as Complete</button>
     </div>
     <!-- Include Firebase SDKs -->
@@ -122,12 +176,12 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script>
        function openNav() {
-            document.getElementById("sidebar").style.width = "250px";
-        }
+      document.getElementById("sidebar").classList.add("open");
+    }
 
-        function closeNav() {
-            document.getElementById("sidebar").style.width = "0";
-        }
+    function closeNav() {
+      document.getElementById("sidebar").classList.remove("open");
+    }
 
         const urlParams = new URLSearchParams(window.location.search);
         const taskId = urlParams.get('id');
@@ -177,9 +231,25 @@
         taskRef.once('value').then((snapshot) => {
             if (snapshot.exists()) {
                 const taskData = snapshot.val();
-                document.getElementById("task-name").textContent = `Task: ${taskData.task}`;
-                document.getElementById("task-time").textContent = `Time: ${taskData.time}`;
+                const taskNameElement = document.getElementById("task-name");
+                const taskTimeElement = document.getElementById("task-time");
+                // document.getElementById("task-name").textContent = `Task: ${taskData.task}`;
+                // document.getElementById("task-time").textContent = `Time: ${taskData.time}`;
                 const statusButton = document.getElementById("status-button");
+
+                taskNameElement.textContent = `${taskData.task}`;
+                taskNameElement.style.fontSize = "20px";
+                taskNameElement.style.fontWeight = "600";
+                taskNameElement.style.color = "#000";
+                taskNameElement.style.margin = "10px 4px";
+
+                taskTimeElement.textContent = `${taskData.time}`;
+                taskTimeElement.style.fontSize = "20px";
+                taskTimeElement.style.color = "#666";
+                taskTimeElement.style.margin = "10px 7px";
+                taskTimeElement.style.fontWeight = "600";
+                taskTimeElement.style.color = "#000";
+                
 
                 // Check if 15 hours have passed since uploadTime
                 const uploadTime = new Date(taskData.uploadTime);
@@ -207,8 +277,38 @@
                         statusButton.addEventListener("click", () => {
                             window.location.href = `upload.html?id=${taskId}&office=${correctedOffice}`;
                         });
-                    }
+                    }  
                 }
+                const taskImage = document.getElementById("task-image");
+        switch (taskData.time) {
+            case "07:00":
+                taskImage.src = "cabin1.webp";
+                break;
+            case "9:00":
+                taskImage.src = "water.jpg";
+                break;
+            case "9:30":
+                taskImage.src = "reception.avif";
+                break;
+            case "10:00":
+                taskImage.src = "glass.jpeg";
+                break;
+            case "12:00":
+                taskImage.src = "lunch.jpeg";
+                break;
+            case "13:30":
+                taskImage.src = "break.jpeg";
+                break;
+            case "14:00":
+                taskImage.src = "washroom.jpeg";
+                break;
+            case "14:30":
+                taskImage.src = "dustbin.webp";
+                break;
+            default:
+                taskImage.src = "reception.avif";
+                break;
+        }
             } else {
                 document.getElementById("task-name").textContent = "Task not found";
                 document.getElementById("task-time").textContent = "";
