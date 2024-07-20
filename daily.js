@@ -78,7 +78,6 @@ onAuthStateChanged(auth, user => {
                     document.getElementById("adminOfficeSelectionBtn").style.display = "block";
                 }
 
-                let tasksRef;
                 switch (userOffice) {
                     case 'workvia':
                         tasksRef = ref(database, "Workvia");
@@ -105,6 +104,9 @@ onAuthStateChanged(auth, user => {
                 }
                 document.body.classList.add(userOffice);
                 fetchAndDisplayTasks(tasksRef);
+                setInterval(() => {
+                    fetchAndUpdateTaskStatuses(tasksRef);
+                }, 3600000); 
             } else {
                 alert('User data not found.');
                 window.location.href = 'index.html';
@@ -115,7 +117,8 @@ onAuthStateChanged(auth, user => {
     }
 });
 
-function fetchAndDisplayTasks(tasksRef) {
+function fetchAndDisplayTasks(ref) {
+    tasksRef=ref;
     showShimmerEffect(); // Show shimmer effect while data is loading
   
     onValue(tasksRef, function(snapshot) {
@@ -253,33 +256,33 @@ function appendTaskToShoppingListEl(taskId, taskData) {
     timeDetailEl.style.marginTop = "8px";
     timeDetailEl.style.width = "80%";
 
-    // let statusEl = document.createElement("span");
-    // statusEl.textContent=taskData.status;
-    // statusEl.style.display = "inline-block";
-    // statusEl.style.padding = "5px 8px";
-    // statusEl.style.borderRadius = "5px";
-    // statusEl.style.position = "absolute";
-    // statusEl.style.bottom = "10px";
-    // statusEl.style.right = "5px";
-    // statusEl.style.fontSize = "20px";
-    // statusEl.style.fontWeight = "700";
-    // statusEl.style.color = "white";
-    // if (taskData.status.toLowerCase() === "complete") {
-    //     statusEl.style.backgroundColor = "green";
-    // } else if (taskData.status.toLowerCase() === "incomplete") {
-    //     statusEl.style.backgroundColor = "red";
-    // } else {
-    //     statusEl.style.backgroundColor = "grey"; // Default color for other statuses
-    // }
-    // statusEl.style.margin = "0 auto";
-    // statusEl.style.marginTop = "8px";
+    let statusEl = document.createElement("span");
+    statusEl.textContent=taskData.status;
+    statusEl.style.display = "inline-block";
+    statusEl.style.padding = "5px 8px";
+    statusEl.style.borderRadius = "5px";
+    statusEl.style.position = "absolute";
+    statusEl.style.bottom = "10px";
+    statusEl.style.right = "5px";
+    statusEl.style.fontSize = "20px";
+    statusEl.style.fontWeight = "700";
+    statusEl.style.color = "white";
+    if (taskData.status.toLowerCase() === "complete") {
+        statusEl.style.backgroundColor = "green";
+    } else if (taskData.status.toLowerCase() === "incomplete") {
+        statusEl.style.backgroundColor = "red";
+    } else {
+        statusEl.style.backgroundColor = "grey"; // Default color for other statuses
+    }
+    statusEl.style.margin = "0 auto";
+    statusEl.style.marginTop = "8px";
 
 
     // Append task details to the container
     textContainerEl.appendChild(taskDescE1);
     textContainerEl.appendChild(taskDetailEl);
     textContainerEl.appendChild(timeDetailEl);
-    // textContainerEl.appendChild(statusEl);
+    textContainerEl.appendChild(statusEl);
 
     // Append image and text container to the list item
     newEl.appendChild(imgEl);
@@ -292,7 +295,38 @@ function appendTaskToShoppingListEl(taskId, taskData) {
 
     shoppingListEl.appendChild(newEl);
 }
+let tasksRef;
+function fetchAndUpdateTaskStatuses() {
+    onValue(tasksRef, function(snapshot) {
+        if (snapshot.exists()) {
+            let tasksArray = Object.entries(snapshot.val());
 
+            tasksArray.forEach(function(taskItem) {
+                let taskId = taskItem[0];
+                let taskData = taskItem[1];
+
+                // Update task status on the page if it's incomplete
+                let taskEl = document.querySelector(`li[data-task-id="${taskId}"]`);
+                if (taskEl) {
+                    let statusEl = taskEl.querySelector("span:last-child");
+                    if (taskData.status.toLowerCase() === "incomplete") {
+                        statusEl.textContent = "incomplete";
+                        statusEl.style.backgroundColor = "red";
+                    } else if (taskData.status.toLowerCase() === "complete") {
+                        statusEl.textContent = "complete";
+                        statusEl.style.backgroundColor = "green";
+                    } else {
+                        statusEl.textContent = taskData.status;
+                        statusEl.style.backgroundColor = "grey";
+                    }
+                }
+            });
+        }
+    });
+}
+setInterval(() => {
+    fetchAndUpdateTaskStatuses();
+}, 3600000);
 
 // Initial fetch to ensure data is loaded on page load
 onAuthStateChanged(auth, user => {
@@ -307,7 +341,6 @@ onAuthStateChanged(auth, user => {
                     document.getElementById("adminOfficeSelectionBtn").textContent = userOffice;
                 }
 
-                let tasksRef;
                 switch (userOffice) {
                     case 'workvia':
                         tasksRef = ref(database, "Workvia");
