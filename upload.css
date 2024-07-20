@@ -7,25 +7,20 @@ html, body {
     user-select: none;
 }
 
-.container {
+/* .container {
     display: flex;
     flex-direction: column;
     max-width: 320px;
     margin: 30px auto;
-}
+} */
 
-img {
+/* img {
     width: 150px;
     margin: 0 auto;
-}
-#vedio{
-    
-    margin: 0 auto;
-    
+} */
 
-}
 
-input {
+/* input {
     color: #7243CD;
     background-color: #e3e4e7;
     border:2px;
@@ -38,25 +33,7 @@ input {
     font-family: 'Rubik', sans-serif;
     margin: 10px 0;
     flex-wrap: wrap;
-}
-
-button {
-    color: #FDFDFD;
-    background-color: #7243CD;
-    border: 0;
-    padding: 15px;
-    border-radius: 8px;
-    font-size: 20px;
-    text-align: center;
-    font-family: 'Rubik', sans-serif;
-    margin-top: 10px;
-}
-
-button:hover {
-    background-color: #402773;
-    cursor: pointer;
-}
-
+} */
 .logo {
     border-radius: 100px;
 }

@@ -13,117 +13,87 @@
             background-color: hsl(0, 0%, 100%);
             color: #0e0d0c;
             user-select: none;
+            width:100%;
             height: 100%;
+            overflow:hidden;
         }
-
-        .menu-icon {
-            font-size: 30px;
-            cursor: pointer;
-            padding: 10px;
-        }
-
-        .sidebar {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: #111;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-            z-index: 1;
-        }
-
-        .sidebar a {
-            padding: 15px 25px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #FDFDFD;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .sidebar a:hover {
-            background-color: #575757;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 25px;
-            font-size: 30px;
-        }
-
         .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            position: relative;
+            width: 100%;
             height: 100%;
+            margin:0 auto;
         }
 
         video {
             width: 100%;
-            max-width: 600px;
-            height: auto;
-            aspect-ratio: 4 / 3;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            height: 100%;
+            object-fit: cover;
         }
 
         #captureButton {
-            background-color: #7243CD;
+            position: absolute;
+            z-index: 10;
+            background-color: #335ef7;
             color: #FFF;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 25px;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
-            margin-bottom: 20px;
+            margin: 20px;
+            bottom: 5px;
+            left: 47%;
+            transform: translateX(-50%);
+            transition: all 100ms ease;
         }
 
         #captureButton:hover {
-            background-color: #402773;
+            background-color: rgba(19, 37, 104, 0.95);
         }
 
         #capturedImage {
             display: none;
             width: 100%;
-            max-width: 600px;
-            height: auto;
-            aspect-ratio: 4 / 3;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            height: 100%;
         }
-
         #uploadMessage {
             display: none;
         }
-
-        @media (max-width: 600px) {
-            video, #capturedImage {
-                width: 100%;
-                height: auto;
-            }
-            #captureButton {
-                width: 100%;
-                padding: 15px;
-                font-size: 20px;
-            }
+        button#back{
+            display:flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            z-index: 10;
+            background-color: #7243CD;
+            color: #FFF;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 20px;
+            top: 8px;
+            background-color: #eaeffe;
+            color: #335ef7;
+            font-weight: 700;
+        }
+        button:active{
+            transform:scale(0.98);
+        }
+        button:hover{
+            border:2px solid #335ef7;
+        }
+        span img{
+            width:30px;
+            margin-top:2px;
         }
     </style>
 </head>
 <body>
-    <div class="menu-icon" onclick="openNav()">&#9776;</div>
-    <div id="sidebar" class="sidebar">
-        <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
-        <a href="land.html">Homepage</a>
-        <a href="#" id="logoutBtn">Logout</a>
-    </div>
     <div class="container">
+        <button id="back"><span><img src="arrow.png"></span>Go Back</button>
         <video id="video" autoplay></video>
         <button id="captureButton">Capture</button>
         <img id="capturedImage">
@@ -251,13 +221,18 @@
             return new File([u8arr], 'captured_image.png', { type: mime });
         }
 
-        document.getElementById("logoutBtn").addEventListener("click", function() {
-            auth.signOut().then(() => {
-                window.location.href = "index.html"; // Redirect to login page
-            }).catch((error) => {
-                console.error("Error signing out:", error);
-            });
+        document.getElementById("back").addEventListener("click", () => {
+            window.location.href = `taskdetails.html?id=${taskId}&office=${office}`;
         });
+
+        // document.getElementById("logoutBtn").addEventListener("click", function() {
+        //     auth.signOut().then(() => {
+        //         window.location.href = "index.html"; // Redirect to login page
+        //     }).catch((error) => {
+        //         console.error("Error signing out:", error);
+        //     });
+        // });
     </script>
 </body>
 </html>
+ 
