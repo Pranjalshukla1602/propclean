@@ -91,7 +91,7 @@
 
         // const adminEmails = ["shanvishukla39@gmail.com", "thomas@propques.com", "amdixit1711@gmail.com","prashant.m@cubispace.com"];
         const adminInfo = {
-            "shanvishukla39@gmail.com": "Cubispace",
+            "shanvishukla39@gmail.com": "Workvia",
             "thomas@propques.com": "Workdesq",
             "amdixit1711@gmail.com": "Workvia",
             "prashant.m@cubispace.com": "Sapna Sangeeta"
@@ -143,6 +143,7 @@
                             <th>Status</th>
                             <th>Upload Time</th>
                             <th>Completed By</th>
+                            <th>Image</th>
                         </tr>
                     </thead>
                     <tbody id="taskTableBody"></tbody>
@@ -179,6 +180,18 @@
                     const completedByCell = document.createElement('td');
                     completedByCell.textContent = task.completedBy || 'N/A';
                     row.appendChild(completedByCell);
+
+                    const imageCell = document.createElement('td');
+                    if (task.imageUrl) {
+                        const img = document.createElement('img');
+                        img.src = task.imageUrl;
+                        img.alt = 'Task Image';
+                        img.classList.add('task-image');
+                        imageCell.appendChild(img);
+                    } else {
+                        imageCell.textContent = 'No Image';
+                    }
+                    row.appendChild(imageCell);
 
                     taskTableBody.appendChild(row);
                 }

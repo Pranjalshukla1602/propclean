@@ -182,6 +182,10 @@
             imagesRef.put(file).then((snapshot) => {
                 console.log('Uploaded the image successfully');
 
+                // Get the download URL of the uploaded image
+                imagesRef.getDownloadURL().then((downloadURL) => {
+                    console.log('File available at', downloadURL);
+
                 // Display upload message
                 uploadMessage.style.display = 'block';
 
@@ -194,13 +198,17 @@
                 taskRef.update({
                     status: 'complete',
                     uploadTime: new Date().toISOString(),
-                    completedBy: userEmail
+                    completedBy: userEmail,
+                    imageUrl: downloadURL
                 }).then(() => {
                     console.log('Task status updated to Complete');
                     alert('Image uploaded successfully and task marked as complete!');
                     window.location.href = `taskDetails.html?id=${taskId}&office=${office}`;
                 }).catch((error) => {
                     console.error('Error updating task status:', error);
+                });
+            }).catch((error) => {
+                    console.error('Error getting download URL:', error);
                 });
 
             }).catch((error) => {
