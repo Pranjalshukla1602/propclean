@@ -89,15 +89,21 @@
         const database = firebase.database();
         const auth = firebase.auth();
 
-        const adminEmails = ["shanvishukla39@gmail.com", "thomas@propques.com", "amdixit1711@gmail.com","prashant.m@cubispace.com"];
+        // const adminEmails = ["shanvishukla39@gmail.com", "thomas@propques.com", "amdixit1711@gmail.com","prashant.m@cubispace.com"];
+        const adminInfo = {
+            "shanvishukla39@gmail.com": "Cubispace",
+            "thomas@propques.com": "Workdesq",
+            "amdixit1711@gmail.com": "Workvia",
+            "prashant.m@cubispace.com": "Sapna Sangeeta"
+        };
 
         auth.onAuthStateChanged(user => {
             if (user) {
                 const userRef = database.ref('users/' + user.uid);
                 userRef.once('value').then(snapshot => {
                     const userData = snapshot.val();
-                    if (adminEmails.includes(user.email)) {
-                        populateOfficeSelect(true);
+                    if (user.email in adminInfo) {
+                        populateOfficeSelect(true, adminInfo[user.email]);
                         document.getElementById('adminContainer').classList.add('active');
                     } else {
                         populateOfficeSelect(false, userData.office);
@@ -112,20 +118,11 @@
             const officeSelect = document.getElementById('officeSelect');
             officeSelect.innerHTML = ''; // Clear any existing options
 
-            if (isAdmin) {
-                const offices = ["Cubispace", "Workdesq", "Workvia", "Sapna Sangeeta","Worqspot","Karyasthal"];
-                offices.forEach(office => {
-                    const option = document.createElement('option');
-                    option.value = office;
-                    option.textContent = office;
-                    officeSelect.appendChild(option);
-                });
-            } else {
                 const option = document.createElement('option');
                 option.value = userOffice;
                 option.textContent = userOffice;
                 officeSelect.appendChild(option);
-            }
+                officeSelect.value = userOffice;
         }
 
         function loadReports() {
