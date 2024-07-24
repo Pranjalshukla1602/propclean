@@ -159,7 +159,7 @@
   <div id="sidebar" class="sidebar">
     <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
     <a href="land.html"><img src="user.png">Homepage</a>
-    <a href="#" id="adminDashboardLink" style="display: none; text-wrap: wrap;" onclick="navigateTo('admin-dashboard.html')"><img src="admin-panel.png">Admin Dashboard</a>
+    <a href="#" id="adminDashboardLink" style="display: none; text-wrap: wrap;" onclick="navigateTo('reports.html')"><img src="admin-panel.png">View Reports</a>
     <a href="#" id="logoutBtn"><img src="logout.png">Logout</a>
   </div>
   <h1 class="head">Task Details</h1>
@@ -250,34 +250,18 @@
                 taskTimeElement.style.color = "#000";
                 
 
-                // Check if 15 hours have passed since uploadTime
-                const uploadTime = new Date(taskData.uploadTime);
-                const currentTime = new Date();
-                const hoursPassed = (currentTime - uploadTime) / (1000 * 60 * 60);
-                console.log(currentTime);
-                console.log(uploadTime);
-                console.log(hoursPassed);
-                if (hoursPassed >= 15 && taskData.status.toLowerCase() === "complete") {
-                    // Update task status to incomplete if 20 hours have passed
-                    taskRef.update({ status: "incomplete" }).then(() => {
-                        statusButton.textContent = "Mark as Complete";
-                        statusButton.classList.remove("completed");
-                        statusButton.disabled = false;
-                    }).catch((error) => {
-                        console.error('Error updating task status:', error);
-                    });
+
+                if (taskData.status.toLowerCase() === "complete" || taskData.status.toLowerCase() === "approved") {
+                    statusButton.textContent = "Completed";
+                    statusButton.classList.add("completed");
+                    statusButton.disabled = true;
                 } else {
-                    if (taskData.status.toLowerCase() === "complete") {
-                        statusButton.textContent = "Completed";
-                        statusButton.classList.add("completed");
-                        statusButton.disabled = true;
-                    } else {
-                        statusButton.textContent = "Mark as Complete";
-                        statusButton.addEventListener("click", () => {
-                            window.location.href = `upload.html?id=${taskId}&office=${correctedOffice}`;
-                        });
-                    }  
+                    statusButton.textContent = "Mark as Complete";
+                    statusButton.addEventListener("click", () => {
+                        window.location.href = `upload.html?id=${taskId}&office=${correctedOffice}`;
+                    });
                 }
+
                 const taskImage = document.getElementById("task-image");
         switch (taskData.time) {
             case "07:00":
@@ -325,6 +309,42 @@
                 console.error("Error signing out:", error);
             });
         });
+
+        function resetTasksIfNeeded() {
+            const resetRef = database.ref('lastResetDate');
+            resetRef.once('value').then(snapshot => {
+                const lastResetDate = snapshot.val();
+                const currentDate = new Date();
+                const currentDay = currentDate.toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+
+                if (lastResetDate !== currentDay) {
+                    const currentHour = currentDate.getHours();
+                    if (currentHour >= 6) {
+                        resetAllTasks();
+                        resetRef.set(currentDay);
+                    }
+                }
+            });
+        }
+
+        function resetAllTasks() {
+            const officeRefs = ['Workvia', 'Workdesq', 'Sapna Sangeeta', 'Karyasthal', 'Cubispace', 'Worqspot']; // Add all your office references here
+            officeRefs.forEach(office => {
+                const tasksRef = database.ref(office);
+                tasksRef.once('value').then(snapshot => {
+                    snapshot.forEach(childSnapshot => {
+                        const taskKey = childSnapshot.key;
+                        tasksRef.child(taskKey).update({
+                            status: 'incomplete',
+                            imageUrl: null,
+                            completedBy: null,
+                            uploadTime: null
+                        });
+                    });
+                });
+            });
+        }
+        resetTasksIfNeeded();
     </script>
     <script src="taskDetails.js"></script>
 </body>

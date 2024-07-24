@@ -2,7 +2,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup, onAuthStateChanged,signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 import { getDatabase, ref, set ,query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
 
 // Firebase configuration
@@ -43,15 +43,59 @@ const returnBtn = document.getElementById("return-btn");
 const forgotPasswordLink = document.getElementById("forgot-password") ? document.getElementById("forgot-password").querySelector("a") : null;
 const googleSignUpButton = document.getElementById("google-sign-up");
 
+const adminEmails = [
+  "shanvishukla39@gmail.com",
+  "thomas@propques.com",
+  "amdixit1711@gmail.com",
+  "sales@karyasthal.com",
+  "aman.sales@workdesq.com",
+  "cm.aamir@worqspot.com",
+  "ops@workviaa.com",
+  "tushar.c@workviaa.com",
+  "prashant.m@cubispace.com",
+  "cubispace@gmail.com",
+  "karyasthal@gmail.com",
+  "workdesq@gmail.com",
+  "workvia@gmail.com",
+  "sapnasangeeta@gmail.com",
+  "worqspot@gmail.com"
+];
+
+
 // Variables
 let email, password, signupEmail, signupPassword, confirmSignupEmail, confirmSignUpPassword, office;
+
+
+// Function to check if user is blocked
+function checkUserBlockStatus(user) {
+  // If the user's email is in the admin email list, skip the blocked check
+  if (adminEmails.includes(user.email)) {
+    return Promise.resolve(false);
+  }
+
+  // Otherwise, check the blocked status in the database
+  return get(ref(database, 'users/' + user.uid)).then((snapshot) => {
+    const userData = snapshot.val();
+    return userData.blocked;
+  });
+}
 
 // Check authentication state when the page loads
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    window.location.href = "land.html"; // Redirect to landing page if user is already authenticated
+    checkUserBlockStatus(user).then(isBlocked => {
+      if (isBlocked) {
+        signOut(auth).then(() => {
+          window.alert("Your account has been blocked. Please contact the administrator.");
+        });
+      } else {
+        window.location.href = "land.html"; // Redirect to landing page if user is not blocked
+      }
+    });
   }
 });
+
+
 
 // Google Sign-In
 googleSignInButton.addEventListener("click", function() {
@@ -59,23 +103,40 @@ googleSignInButton.addEventListener("click", function() {
   signInWithPopup(auth, provider)
     .then((result) => {
       const user = result.user;
-      console.log("Signed in with Google successfully:", user);
-      window.location.href = "land.html"; // Redirect to landing page
+      checkUserBlockStatus(user).then(isBlocked => {
+        if (isBlocked) {
+          signOut(auth).then(() => {
+            window.alert("Your account has been blocked. Please contact the administrator.");
+          });
+        } else {
+          window.location.href = "land.html"; // Redirect to landing page
+        }
+      });
     })
     .catch((error) => {
       console.error("Error signing in with Google:", error);
       handleAuthError(error);
     });
 });
-
 // Google Sign-Up
 googleSignUpButton.addEventListener("click", function() {
   const provider = new GoogleAuthProvider();
   signInWithPopup(auth, provider)
     .then((result) => {
       const user = result.user;
-      console.log("Signed up with Google successfully:", user);
-      window.location.href = "land.html";
+      // Check if user already exists in the database
+      get(ref(database, 'users/' + user.uid)).then((snapshot) => {
+        if (!snapshot.exists()) {
+          // If user does not exist, save the user data
+          set(ref(database, 'users/' + user.uid), {
+            email: user.email,
+            office: 'defaultOffice', // Change this to your default office value or logic to determine office
+            blocked: false
+          });
+        }
+      }).then(() => {
+        window.location.href = "land.html";
+      });
     })
     .catch((error) => {
       console.error("Error signing up with Google:", error);
@@ -88,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function() {
   setTimeout(function() {
       document.getElementById('splash-screen').style.display = 'none';
       document.getElementById('main-content').style.display = 'block';
-  }, 3000); // Adjust the timeout duration as needed
+  }, 2000); // Adjust the timeout duration as needed
 });
 
 
@@ -103,7 +164,8 @@ document.addEventListener("DOMContentLoaded", function() {
       const userRef = ref(database, 'users/' + user.uid);
       set(userRef, {
         email: user.email,
-        office: selectedOrganisation
+        office: selectedOrganisation,
+        blocked: false
       })
       .then(() => {
         console.log("Organisation saved successfully.");
@@ -144,7 +206,8 @@ createacctbtn.addEventListener("click", function() {
               console.log("User created:", user);
               return set(ref(database, 'users/' + user.uid), {
                 email: signupEmail,
-                office: office
+                office: office,
+                blocked: false 
               });
             })
             .then(() => {
@@ -172,11 +235,24 @@ submitButton.addEventListener("click", function() {
   password = passwordInput.value;
 
   signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      window.alert("Success! Welcome back!");
-      window.location.href = "land.html";
-    })
+  .then((userCredential) => {
+    const user = userCredential.user;
+    const userRef = ref(database, 'users/' + user.uid);
+    get(userRef).then((snapshot) => {
+      const userData = snapshot.val();
+      if (adminEmails.includes(user.email)) {
+        window.alert("Success! Welcome back, admin!");
+        window.location.href = "land.html";
+      } else if (userData.blocked) {
+        auth.signOut().then(() => {
+          window.alert("Your account has been blocked. Please contact the administrator.");
+        });
+      } else {
+        window.alert("Success! Welcome back!");
+        window.location.href = "land.html";
+      }
+    });
+  })
     .catch((error) => {
       console.error("Error occurred during sign-in:", error);
       if (error.code === "auth/invalid-email") {

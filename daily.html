@@ -150,7 +150,7 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       width:100%;
-      height:330px;
+      height:430px;
       display:flex;
       flex-direction:row;
       transition:all 200ms ease-in-out;
@@ -225,7 +225,7 @@
   <div id="sidebar" class="sidebar">
     <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
     <a href="land.html"><img src="user.png">Homepage</a>
-    <a href="#" id="adminDashboardLink" style="display: none; text-wrap: wrap;" onclick="navigateTo('admin-dashboard.html')"><img src="admin-panel.png">Admin Dashboard</a>
+    <a href="#" id="adminDashboardLink" style="display: none; text-wrap: wrap;" onclick="navigateTo('reports.html')"><img src="admin-panel.png">View Reports</a>
     <a href="#" id="logoutBtn"><img src="logout.png">Logout</a>
   </div>
   <div class="container">
@@ -257,7 +257,21 @@
     }
 
     function isAdmin(email) {
-      const adminEmails = ["shanvishukla39@gmail.com", "thomas@propques.com", "amdixit1711@gmail.com","prashant.m@cubispace.com"];
+      const adminEmails = ["shanvishukla39@gmail.com",
+  "thomas@propques.com",
+  "amdixit1711@gmail.com",
+  "sales@karyasthal.com",
+  "aman.sales@workdesq.com",
+  "cm.aamir@worqspot.com",
+  "ops@workviaa.com",
+  "tushar.c@workviaa.com",
+  "prashant.m@cubispace.com",
+  "cubispace@gmail.com",
+  "karyasthal@gmail.com",
+  "workdesq@gmail.com",
+  "workvia@gmail.com",
+  "sapnasangeeta@gmail.com",
+  "worqspot@gmail.com"];
       return adminEmails.includes(email);
     }
   </script>

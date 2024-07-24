@@ -54,6 +54,46 @@
         .admin-only.active {
             display: block;
         }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            margin: 5% auto;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+        }
+        .close{
+      border:none;
+      position: absolute;
+      margin-bottom: 20px;
+      top: 10px;
+      right: 10px;
+      font-size: 30px;
+      color:red;
+      border-radius: 99%;
+      padding: 6px 15px;
+      transition: all 100ms ease-in-out;
+      cursor: pointer;
+    }
+    .close:hover,.close:focus{
+      background-color: red;
+      color:white;
+    }
+        .modal img {
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -65,6 +105,13 @@
         <div id="adminContainer" class="admin-only">
             <h2>Users in Office</h2>
             <div id="usersContainer" class="table-container"></div>
+        </div>
+    </div>
+
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img id="modalImage" src="" alt="Task Image">
         </div>
     </div>
 
@@ -89,12 +136,19 @@
         const database = firebase.database();
         const auth = firebase.auth();
 
-        // const adminEmails = ["shanvishukla39@gmail.com", "thomas@propques.com", "amdixit1711@gmail.com","prashant.m@cubispace.com"];
         const adminInfo = {
+            "shanvishukla39@gmail.com": "Workvia",
+            "cubispace@gmail.com": "Cubispace",
+            "karyasthal@gmail.com": "Karyasthal",
+            "workdesq@gmail.com": "Workdesq",
+            "workvia@gmail.com": "Workvia",
+            "sapnasangeeta@gmail.com": "Sapna Sangeeta",
+            "worqspot@gmail.com": "Worqspot",
             "shanvishukla39@gmail.com": "Workvia",
             "thomas@propques.com": "Workdesq",
             "amdixit1711@gmail.com": "Workvia",
-            "prashant.m@cubispace.com": "Sapna Sangeeta"
+            "prashant.m@cubispace.com": "Cubispace",
+            "sales@karyasthal.com":"Karyasthal","aman.sales@workdesq.com":"Workdesq","cm.aamir@worqspot.com":"Worqspot","ops@workviaa.com":"Workvia","tushar.c@workviaa.com":"Workvia"
         };
 
         auth.onAuthStateChanged(user => {
@@ -108,6 +162,7 @@
                     } else {
                         populateOfficeSelect(false, userData.office);
                     }
+                    resetTasksIfNeeded();
                 });
             } else {
                 window.location.href = 'index.html'; // Redirect to login if user is not authenticated
@@ -144,6 +199,7 @@
                             <th>Upload Time</th>
                             <th>Completed By</th>
                             <th>Image</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="taskTableBody"></tbody>
@@ -170,7 +226,7 @@
 
                     const statusCell = document.createElement('td');
                     statusCell.textContent = task.status;
-                    statusCell.classList.add(task.status.toLowerCase() === 'complete' ? 'status-complete' : 'status-incomplete');
+                    statusCell.classList.add(task.status.toLowerCase() === 'complete' || task.status.toLowerCase() === 'approved' ? 'status-complete' : 'status-incomplete');
                     row.appendChild(statusCell);
 
                     const uploadTimeCell = document.createElement('td');
@@ -183,18 +239,63 @@
 
                     const imageCell = document.createElement('td');
                     if (task.imageUrl) {
-                        const img = document.createElement('img');
-                        img.src = task.imageUrl;
-                        img.alt = 'Task Image';
-                        img.classList.add('task-image');
-                        imageCell.appendChild(img);
+                        const previewButton = document.createElement('button');
+                        previewButton.textContent = 'Preview';
+                        previewButton.style.cursor = 'pointer';
+                        previewButton.onclick = () => showModal(task.imageUrl);
+                        imageCell.appendChild(previewButton);
                     } else {
                         imageCell.textContent = 'No Image';
                     }
                     row.appendChild(imageCell);
 
+                    const actionCell = document.createElement('td');
+                    if (task.status.toLowerCase() === 'complete') {
+                        const approveButton = document.createElement('button');
+                        approveButton.textContent = 'Approve';
+                        approveButton.onclick = () => approveTask(office, taskId);
+                        actionCell.appendChild(approveButton);
+
+                        const disapproveButton = document.createElement('button');
+                        disapproveButton.textContent = 'Disapprove';
+                        disapproveButton.onclick = () => disapproveTask(office, taskId);
+                        actionCell.appendChild(disapproveButton);
+                    } else {
+                        actionCell.textContent = task.status === 'approved' ? 'Approved' : task.status === 'disapproved' ? 'Disapproved' : '';
+                    }
+                    row.appendChild(actionCell);
+
                     taskTableBody.appendChild(row);
                 }
+            });
+        }
+
+
+
+        function approveTask(office, taskId) {
+            const taskRef = firebase.database().ref(`${office}/${taskId}`);
+            taskRef.update({
+                status: 'approved'
+            }).then(() => {
+                loadReports();
+            }).catch(error => {
+                console.error("Error approving task:", error);
+                alert("Error occurred while approving the task. Please try again.");
+            });
+        }
+
+        function disapproveTask(office, taskId) {
+            const taskRef = firebase.database().ref(`${office}/${taskId}`);
+            taskRef.update({
+                status: 'incomplete',
+                imageUrl: null,
+                completedBy: null,
+                uploadTime: null
+            }).then(() => {
+                loadReports();
+            }).catch(error => {
+                console.error("Error disapproving task:", error);
+                alert("Error occurred while disapproving the task. Please try again.");
             });
         }
 
@@ -207,6 +308,8 @@
                         <tr>
                             <th>Email</th>
                             <th>Office</th>
+                            <th>Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="userTableBody"></tbody>
@@ -232,11 +335,95 @@
                         officeCell.textContent = user.office;
                         row.appendChild(officeCell);
 
+                        const statusCell = document.createElement('td');
+                        statusCell.textContent = user.blocked ? 'Blocked' : 'Active';
+                        row.appendChild(statusCell);
+
+                        const actionCell = document.createElement('td');
+                        const actionButton = document.createElement('button');
+                        actionButton.textContent = user.blocked ? 'Unblock' : 'Block';
+                        actionButton.onclick = () => toggleBlockUser(userId, user.blocked);
+                        actionCell.appendChild(actionButton);
+                        row.appendChild(actionCell);
+
                         userTableBody.appendChild(row);
                     }
                 }
             });
         }
+
+        function toggleBlockUser(userId, isBlocked) {
+    console.log(`Toggling block status for user ${userId}. Currently blocked: ${isBlocked}`);
+    const userRef = firebase.database().ref('users/' + userId);
+    userRef.update({
+        blocked: !isBlocked
+    }).then(() => {
+        console.log(`User ${userId} block status updated successfully.`);
+        loadReports(); // Refresh the user reports to show updated status and button text
+    }).catch(error => {
+        console.error("Error updating user block status:", error);
+        alert("Error occurred while updating the user block status. Please try again.");
+    });
+}
+
+        function showModal(imageUrl) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageUrl;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+        }
+
+        // Close the modal when clicking outside of the modal content
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+
+        function resetTasksIfNeeded() {
+    const resetRef = database.ref('lastResetDate');
+    
+    resetRef.once('value').then(snapshot => {
+        const lastResetDate = snapshot.val();
+        const currentDate = new Date();
+        const currentDay = currentDate.toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+
+        // Check if the current date is different from the last reset date
+        if (lastResetDate !== currentDay) {
+            const currentHour = currentDate.getHours();
+            if (currentHour >= 6) {
+                resetAllTasks();
+                resetRef.set(currentDay);
+            }
+        }
+    });
+}
+
+function resetAllTasks() {
+    const officeRefs = ['Workvia', 'Workdesq', 'Sapna Sangeeta', 'Karyasthal', 'Cubispace', 'Worqspot']; // Add all your office references here
+
+    officeRefs.forEach(office => {
+        const tasksRef = database.ref(office);
+        tasksRef.once('value').then(snapshot => {
+            snapshot.forEach(childSnapshot => {
+                const taskKey = childSnapshot.key;
+                tasksRef.child(taskKey).update({
+                    status: 'incomplete',
+                    imageUrl: null,
+                    completedBy: null,
+                    uploadTime: null
+                });
+            });
+        });
+    });
+}
     </script>
 </body>
 </html>

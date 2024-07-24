@@ -61,7 +61,21 @@ function showShimmerEffect() {
   }
 
 function isAdmin(email) {
-  const adminEmails = ["shanvishukla39@gmail.com", "thomas@propques.com", "amdixit1711@gmail.com", "prashant.m@cubispace.com"];
+  const adminEmails = ["shanvishukla39@gmail.com",
+  "thomas@propques.com",
+  "amdixit1711@gmail.com",
+  "sales@karyasthal.com",
+  "aman.sales@workdesq.com",
+  "cm.aamir@worqspot.com",
+  "ops@workviaa.com",
+  "tushar.c@workviaa.com",
+  "prashant.m@cubispace.com",
+  "cubispace@gmail.com",
+  "karyasthal@gmail.com",
+  "workdesq@gmail.com",
+  "workvia@gmail.com",
+  "sapnasangeeta@gmail.com",
+  "worqspot@gmail.com"];
   return adminEmails.includes(email);
 }
 
@@ -165,7 +179,7 @@ function appendTaskToShoppingListEl(taskId, taskData) {
     let newEl = document.createElement("li");
     newEl.style.display = "flex";
     newEl.style.flexDirection = "column";
-    newEl.style.justifyContent = "center";
+    newEl.style.justifyContent = "between";
     newEl.style.alignItems = "center";
     newEl.style.border = "1px solid #ccc";
     newEl.style.borderRadius = "12px";
@@ -180,8 +194,9 @@ function appendTaskToShoppingListEl(taskId, taskData) {
     imgEl.style.width = "95%";
     imgEl.style.height = "160px";
     imgEl.style.borderRadius = "8px";
-    imgEl.style.objectFit = "cover";
     imgEl.style.marginTop = "5px";
+    imgEl.style.marginBottom = "24px";
+    imgEl.style.objectFit = "cover";
     imgEl.style.boxShadow = "4px 4px 15px 0px rgb(51,94,247,0.2)";
 
     // Set image source based on taskData.time
@@ -235,7 +250,7 @@ function appendTaskToShoppingListEl(taskId, taskData) {
     taskDescE1.style.color = "#335EF7";
     taskDescE1.style.borderRadius = "5px";
     taskDescE1.style.margin = "0 auto";
-
+    taskDescE1.style.marginTop = "20px";
 
     let taskDetailEl = document.createElement("span");
     taskDetailEl.textContent = taskData.task;
@@ -246,6 +261,19 @@ function appendTaskToShoppingListEl(taskId, taskData) {
     taskDetailEl.style.marginTop = "12px";
     taskDetailEl.style.width = "80%";
     
+    let taskTimeHeadingEl = document.createElement("span");
+    taskTimeHeadingEl.textContent = "Task Time";
+    taskTimeHeadingEl.style.fontSize = "18px";
+    taskTimeHeadingEl.style.fontWeight = "800";
+    taskTimeHeadingEl.style.width = "90px";
+    taskTimeHeadingEl.style.backgroundColor = "#EAEFFE";
+    taskTimeHeadingEl.style.fontWeight = "bold";
+    taskTimeHeadingEl.style.color = "#000";
+    taskTimeHeadingEl.style.marginTop = "12px";
+    taskTimeHeadingEl.style.marginLeft = "22px";
+    taskTimeHeadingEl.style.textAlign = "center";
+    taskTimeHeadingEl.style.padding = "2px 0px";
+    taskTimeHeadingEl.style.borderRadius = "3px";
 
     let timeDetailEl = document.createElement("span");
     timeDetailEl.textContent = taskData.time;
@@ -256,14 +284,47 @@ function appendTaskToShoppingListEl(taskId, taskData) {
     timeDetailEl.style.marginTop = "8px";
     timeDetailEl.style.width = "80%";
 
+    let uploadTime = new Date(taskData.uploadTime);
+    let options = { hour: '2-digit', minute: '2-digit'};
+    let formattedUploadTime = uploadTime.toLocaleTimeString([], options);
+
+    if (formattedUploadTime==="Invalid Date") {
+        formattedUploadTime = "Not Uploaded";
+    }
+    console.log(formattedUploadTime);
+
+
+    let uploadTimeHeadingEl = document.createElement("span");
+    uploadTimeHeadingEl.textContent = "Upload Time";
+    uploadTimeHeadingEl.style.fontSize = "18px";
+    uploadTimeHeadingEl.style.fontWeight = "800";
+    uploadTimeHeadingEl.style.width = "120px";
+    uploadTimeHeadingEl.style.backgroundColor = "#EAEFFE";
+    uploadTimeHeadingEl.style.fontWeight = "bold";
+    uploadTimeHeadingEl.style.color = "#000";
+    uploadTimeHeadingEl.style.marginTop = "12px";
+    uploadTimeHeadingEl.style.marginLeft = "22px";
+    uploadTimeHeadingEl.style.textAlign = "center";
+    uploadTimeHeadingEl.style.padding = "2px 0px";
+    uploadTimeHeadingEl.style.borderRadius = "3px";
+
+    let timeDetailE2 = document.createElement("span");
+    timeDetailE2.textContent = formattedUploadTime;
+    timeDetailE2.style.fontSize = "18px";
+    timeDetailE2.style.fontWeight = "bold";
+    timeDetailE2.style.color = "#335ef7";
+    timeDetailE2.style.margin = "0 auto";
+    timeDetailE2.style.marginTop = "8px";
+    timeDetailE2.style.width = "80%";
+
     let statusEl = document.createElement("span");
     statusEl.textContent=taskData.status;
     statusEl.style.display = "inline-block";
     statusEl.style.padding = "5px 8px";
     statusEl.style.borderRadius = "5px";
     statusEl.style.position = "absolute";
-    statusEl.style.bottom = "10px";
-    statusEl.style.right = "5px";
+    statusEl.style.bottom = "-50px";
+    statusEl.style.right = "0px";
     statusEl.style.fontSize = "20px";
     statusEl.style.fontWeight = "700";
     statusEl.style.color = "white";
@@ -271,8 +332,11 @@ function appendTaskToShoppingListEl(taskId, taskData) {
         statusEl.style.backgroundColor = "green";
     } else if (taskData.status.toLowerCase() === "incomplete") {
         statusEl.style.backgroundColor = "red";
-    } else {
-        statusEl.style.backgroundColor = "grey"; // Default color for other statuses
+    } else if(taskData.status.toLowerCase()==="approved") {
+        statusEl.style.backgroundColor = "blue"; // Default color for other statuses
+    }
+    else{
+        statusEl.style.backgroundColor = "gray";
     }
     statusEl.style.margin = "0 auto";
     statusEl.style.marginTop = "8px";
@@ -281,7 +345,10 @@ function appendTaskToShoppingListEl(taskId, taskData) {
     // Append task details to the container
     textContainerEl.appendChild(taskDescE1);
     textContainerEl.appendChild(taskDetailEl);
+    textContainerEl.appendChild(taskTimeHeadingEl);
     textContainerEl.appendChild(timeDetailEl);
+    textContainerEl.appendChild(uploadTimeHeadingEl);
+    textContainerEl.appendChild(timeDetailE2);
     textContainerEl.appendChild(statusEl);
 
     // Append image and text container to the list item
