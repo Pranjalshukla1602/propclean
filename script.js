@@ -51,7 +51,7 @@ const adminEmails = [
   "aman.sales@workdesq.com",
   "cm.aamir@worqspot.com",
   "ops@workviaa.com",
-  "tushar.c@workviaa.com",
+  "sapnasangeetaoffices@gmail.com",
   "prashant.m@cubispace.com",
   "cubispace@gmail.com",
   "karyasthal@gmail.com",

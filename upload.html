@@ -203,7 +203,8 @@
                 }).then(() => {
                     console.log('Task status updated to Complete');
                     alert('Image uploaded successfully and task marked as complete!');
-                    window.location.href = `taskDetails.html?id=${taskId}&office=${office}`;
+                    window.location.href = `daily.html`;
+                    history.replaceState(null, '', 'land.html');
                 }).catch((error) => {
                     console.error('Error updating task status:', error);
                 });
