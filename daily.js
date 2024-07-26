@@ -154,12 +154,18 @@ function fetchAndDisplayTasks(ref) {
           let taskData = taskItem[1];
           appendTaskToShoppingListEl(taskItem[0], taskData);
         });
+        const preferredLanguage = getPreferredLanguage();
+        translatePage(preferredLanguage);
       } else {
         shoppingListEl.innerHTML = "No tasks found";
       }
     });
   }
-
+//   document.getElementById('languageSelector').addEventListener('change', function() {
+//     const selectedLanguage = this.value;
+//     localStorage.setItem('preferredLanguage', selectedLanguage);
+//     translatePage(selectedLanguage);
+// });
 
 
 function parseTime(timeString) {
@@ -174,6 +180,46 @@ function clearShoppingListEl() {
     shoppingListEl.innerHTML = "";
 }
 
+const apiKey = 'AIzaSyAHO1TzYBTB55_eOXdD6cmjGPmQqtdGxVs'; // Replace with your API key
+
+document.getElementById('languageSelector').addEventListener('change', function() {
+  const selectedLanguage = this.value;
+  localStorage.setItem('preferredLanguage', selectedLanguage);
+  translatePage(selectedLanguage);
+});
+
+function getPreferredLanguage() {
+      return localStorage.getItem('preferredLanguage') || 'en';
+    }
+
+async function translatePage(targetLanguage) {
+  const elementsToTranslate = document.querySelectorAll('[data-translate]');
+  elementsToTranslate.forEach(async (element) => {
+    const text = element.innerText;
+    const translatedText = await fetchTranslation(text, targetLanguage);
+    element.innerText = translatedText;
+  });
+}
+
+async function fetchTranslation(text, targetLanguage) {
+  const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${apiKey}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      q: text,
+      target: targetLanguage,
+    })
+  });
+  const data = await response.json();
+  return data.data.translations[0].translatedText;
+}
+document.addEventListener('DOMContentLoaded', () => {
+      const preferredLanguage = getPreferredLanguage();
+      document.getElementById('languageSelector').value = preferredLanguage;
+      translatePage(preferredLanguage);
+    });
 
 function appendTaskToShoppingListEl(taskId, taskData) {
     let newEl = document.createElement("li");
@@ -241,6 +287,7 @@ function appendTaskToShoppingListEl(taskId, taskData) {
     // Create task detail elements
     let taskDescE1 = document.createElement("span");
     taskDescE1.textContent = "Task Details";
+    taskDescE1.setAttribute('data-translate', 'Task Details');
     taskDescE1.style.fontSize = "20px";
     taskDescE1.style.fontWeight = "800";
     taskDescE1.style.backgroundColor = "#EAEFFE";
@@ -254,6 +301,7 @@ function appendTaskToShoppingListEl(taskId, taskData) {
 
     let taskDetailEl = document.createElement("span");
     taskDetailEl.textContent = taskData.task;
+    taskDetailEl.setAttribute('data-translate', taskData.task);
     taskDetailEl.style.fontSize = "18px";
     taskDetailEl.style.fontWeight = "bold";
     taskDetailEl.style.textAlign = "left";
@@ -263,6 +311,7 @@ function appendTaskToShoppingListEl(taskId, taskData) {
     
     let taskTimeHeadingEl = document.createElement("span");
     taskTimeHeadingEl.textContent = "Task Time";
+    taskTimeHeadingEl.setAttribute('data-translate', 'Task Time');
     taskTimeHeadingEl.style.fontSize = "18px";
     taskTimeHeadingEl.style.fontWeight = "800";
     taskTimeHeadingEl.style.width = "90px";
@@ -296,6 +345,7 @@ function appendTaskToShoppingListEl(taskId, taskData) {
 
     let uploadTimeHeadingEl = document.createElement("span");
     uploadTimeHeadingEl.textContent = "Upload Time";
+    uploadTimeHeadingEl.setAttribute('data-translate', 'Upload Time');
     uploadTimeHeadingEl.style.fontSize = "18px";
     uploadTimeHeadingEl.style.fontWeight = "800";
     uploadTimeHeadingEl.style.width = "120px";
@@ -319,6 +369,7 @@ function appendTaskToShoppingListEl(taskId, taskData) {
 
     let statusEl = document.createElement("span");
     statusEl.textContent=taskData.status;
+    statusEl.setAttribute('data-translate', taskData.status);
     statusEl.style.display = "inline-block";
     statusEl.style.padding = "5px 8px";
     statusEl.style.borderRadius = "5px";

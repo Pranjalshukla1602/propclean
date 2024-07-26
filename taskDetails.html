@@ -155,6 +155,15 @@
         border-radius: 5px;
         margin-top:15px;
     }
+    #languageSelector{
+  position:absolute;
+  top: 30px;
+  right:50px;
+  border:2px solid black;
+  padding:6px;
+  border-radius:9999px;
+  text-align: center;
+}
     </style>
 </head>
 <body>
@@ -165,17 +174,65 @@
     <a href="#" id="adminDashboardLink" style="display: none; text-wrap: wrap;" onclick="navigateTo('reports.html')"><img src="admin-panel.png">View Reports</a>
     <a href="#" id="logoutBtn"><img src="logout.png">Logout</a>
   </div>
+  <select id="languageSelector">
+    <option value="en">English</option>
+    <option value="es">Spanish</option>
+    <option value="hi">Hindi</option>
+    <!-- Add more languages as needed -->
+  </select>
   <h1 class="head">Task Details</h1>
     <div id="task-details">
         <img id="task-image" src="" alt="Task Image" style="width: 100%; height: 200px; border-radius: 8px; object-fit: cover;margin:0 auto; box-shadow: 4px 4px 15px 0px rgb(51, 94, 247, 0.2);">
-        <span class="head1">Task</span><p id="task-name"></p>
-        <span class="head1">Time</span><p id="task-time"></p>
-        <button id="status-button">Mark as Complete</button>
+        <span class="head1" data-translate="Task">Task</span><p id="task-name"></p>
+        <span class="head1" data-translate="Time">Time</span><p id="task-time"></p>
+        <button id="status-button" data-translate="Mark as Complete">Mark as Complete</button>
     </div>
     <!-- Include Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script>
+        const apiKey = 'AIzaSyAHO1TzYBTB55_eOXdD6cmjGPmQqtdGxVs'; // Replace with your API key
+
+document.getElementById('languageSelector').addEventListener('change', function() {
+  const selectedLanguage = this.value;
+  localStorage.setItem('preferredLanguage', selectedLanguage);
+  translatePage(selectedLanguage);
+});
+
+function getPreferredLanguage() {
+      return localStorage.getItem('preferredLanguage') || 'en';
+    }
+
+async function translatePage(targetLanguage) {
+  const elementsToTranslate = document.querySelectorAll('[data-translate]');
+  elementsToTranslate.forEach(async (element) => {
+    const text = element.innerText;
+    const translatedText = await fetchTranslation(text, targetLanguage);
+    element.innerText = translatedText;
+  });
+}
+
+async function fetchTranslation(text, targetLanguage) {
+  const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${apiKey}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      q: text,
+      target: targetLanguage,
+    })
+  });
+  const data = await response.json();
+  return data.data.translations[0].translatedText;
+}
+document.addEventListener('DOMContentLoaded', () => {
+      const preferredLanguage = getPreferredLanguage();
+      document.getElementById('languageSelector').value = preferredLanguage;
+      translatePage(preferredLanguage);
+    });
+    </script>
     <script>
        function openNav() {
       document.getElementById("sidebar").classList.add("open");
@@ -191,6 +248,7 @@
 
         if (!taskId || !office) {
             document.getElementById("task-name").textContent = "Invalid task or office ID";
+            document.getElementById("task-name").setAttribute('data-translate', "Invalid task or office ID");
             throw new Error('Invalid task or office ID');
         }
 
@@ -240,12 +298,14 @@
                 const statusButton = document.getElementById("status-button");
 
                 taskNameElement.textContent = `${taskData.task}`;
+                taskNameElement.setAttribute('data-translate', `${taskData.task}`);
                 taskNameElement.style.fontSize = "20px";
                 taskNameElement.style.fontWeight = "600";
                 taskNameElement.style.color = "#000";
                 taskNameElement.style.margin = "10px 4px";
 
                 taskTimeElement.textContent = `${taskData.time}`;
+                taskTimeElement.setAttribute('data-translate', `${taskData.time}`);
                 taskTimeElement.style.fontSize = "20px";
                 taskTimeElement.style.color = "#666";
                 taskTimeElement.style.margin = "10px 7px";
@@ -258,8 +318,10 @@
                     statusButton.textContent = "Completed";
                     statusButton.classList.add("completed");
                     statusButton.disabled = true;
+                    statusButton.setAttribute('data-translate', "Completed");
                 } else {
                     statusButton.textContent = "Mark as Complete";
+                    statusButton.setAttribute('data-translate', "Mark as Complete");
                     statusButton.addEventListener("click", () => {
                         window.location.href = `upload.html?id=${taskId}&office=${correctedOffice}`;
                     });
@@ -295,9 +357,12 @@
                 taskImage.src = "reception.avif";
                 break;
         }
+        translatePage(getPreferredLanguage());
             } else {
                 document.getElementById("task-name").textContent = "Task not found";
+                document.getElementById("task-name").setAttribute('data-translate', "Task not found");
                 document.getElementById("task-time").textContent = "";
+                translatePage(getPreferredLanguage());
             }
         }).catch((error) => {
             document.getElementById("task-name").textContent = "Error loading task details";
