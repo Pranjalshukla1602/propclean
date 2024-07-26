@@ -242,12 +242,21 @@ div.rt{
 .google-sign-button {
   color: #fff;
   background-color: #ffffff;
-  /* border: none; */
   text-align: center;
   justify-content: center;
-  margin-right:10px;
-  margin-top:-5px;
+  margin-right: 10px;
+  margin-top: -5px;
   margin-bottom: 5px;
+  display: inline-flex; /* Ensure it centers the image inside */
+  align-items: center; /* Center vertically */
+  padding: 10px; /* Add padding for the border */
+   /* Add a border */
+  border-radius: 8px; 
+}
+.google-sign-button img {
+  border: 2px solid #878787; /* Add border to the image */
+  border-radius: 4px; /* Slight rounding for a squarish look */
+  padding: 10px; /* Add padding inside the border */
 }
 div.center{
   margin:auto;
@@ -277,6 +286,11 @@ div.center{
   align-items: center;
   column-gap: 10px;
   font-weight:700;
+}
+#google-sign-up img {
+  border: 2px solid #878787; /* Add border to the image */
+  border-radius: 4px; /* Slight rounding for a squarish look */
+  padding: 10px; /* Add padding inside the border */
 }
 
 /* styles.css */

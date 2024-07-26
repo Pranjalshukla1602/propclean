@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "dotenv-cli": "^7.4.2"
+  },
+  "scripts": {
+    "build": "dotenv -e .env -- bash -c 'cat src/script.template.js | envsubst > dist/script.js'"
+  }
+}
