@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const auth = firebase.auth();
 
         const officeMap = {
-            'workvia': 'Workvia',
+            'workviaa': 'Workviaa',
             'workdesq': 'Workdesq',
             'sso': 'Sapna Sangeeta',
             'karyasthal': 'Karyasthal',
@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function resetAllTasks() {
-            const officeRefs = ['Workvia', 'Workdesq', 'Sapna Sangeeta', 'Karyasthal', 'Cubispace', 'Worqspot']; // Add all your office references here
+            const officeRefs = ['Workviaa', 'Workdesq', 'Sapna Sangeeta', 'Karyasthal', 'Cubispace', 'Worqspot']; // Add all your office references here
             officeRefs.forEach(office => {
                 const tasksRef = database.ref(office);
                 tasksRef.once('value').then(snapshot => {

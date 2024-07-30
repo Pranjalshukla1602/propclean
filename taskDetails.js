@@ -16,8 +16,8 @@ const office = urlParams.get('office');
 
 let taskPath;
 switch (office) {
-    case 'workvia':
-        taskPath = `Workvia/${taskId}`;
+    case 'workviaa':
+        taskPath = `Workviaa/${taskId}`;
         break;
     case 'workdesq':
         taskPath = `Workdesq/${taskId}`;
