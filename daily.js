@@ -140,14 +140,32 @@ function fetchAndDisplayTasks(ref) {
   
       if (snapshot.exists()) {
         let tasksArray = Object.entries(snapshot.val());
-  
+        
+        let tasksFrom8AM = tasksArray.filter(task => parseTime(task[1].time) >= parseTime("08:00 AM"));
+            let tasksBefore8AM = tasksArray.filter(task => parseTime(task[1].time) < parseTime("08:00 AM"));
+        
+            tasksFrom8AM.sort((a, b) => {
+                const timeA = parseTime(a[1].time);
+                const timeB = parseTime(b[1].time);
+                return timeA - timeB;
+            });
+
+            tasksBefore8AM.sort((a, b) => {
+                const timeA = parseTime(a[1].time);
+                const timeB = parseTime(b[1].time);
+                return timeA - timeB;
+            });
+
+            // Concatenate the two groups: from 8:00 AM onwards first, then before 8:00 AM
+            tasksArray = tasksFrom8AM.concat(tasksBefore8AM);
         // Sort tasks by time in ascending order
-        tasksArray.sort((a, b) => {
-          const timeA = parseTime(a[1].time);
-          const timeB = parseTime(b[1].time);
-          return timeA - timeB;
-        });
-  
+        // tasksArray.sort((a, b) => {
+        //   const timeA = parseTime(a[1].time);
+        //   const timeB = parseTime(b[1].time);
+        //   return timeA - timeB;
+        // });
+        // tasksArray = tasksArray.filter(task => parseTime(task[1].time) >= parseTime("08:00 AM"));
+        
         clearShoppingListEl();
   
         tasksArray.forEach(function(taskItem) {
@@ -172,7 +190,10 @@ function parseTime(timeString) {
     if (!timeString) {
         return Infinity; // Set a very high value for missing times to sort them to the end
     }
-    const [hours, minutes] = timeString.split(':').map(Number);
+    const [time, period] = timeString.split(' ');
+    let [hours, minutes] = time.split(':').map(Number);
+    if (period === 'PM' && hours !== 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
     return hours * 60 + minutes;
 }
 
@@ -274,6 +295,133 @@ function appendTaskToShoppingListEl(taskId, taskData) {
                 imgEl.src = "reception.avif"; 
             }
 
+    if(taskData.assigned==="Prakash")
+    {
+        if(taskData.time==="08:20 AM")
+        {
+            imgEl.src = "water.jpg"; 
+        }
+        else if(taskData.time==="09:00 AM")
+        {
+            imgEl.src = "lunch.jpeg"; 
+        }
+        else if(taskData.time==="09:30 AM")
+            {
+                imgEl.src = "cabin.webp"; 
+            }
+        else if(taskData.time==="10:00 AM")
+            {
+                imgEl.src = "wet.jpeg"; 
+            }
+        else if(taskData.time==="12:30 PM")
+        {
+            imgEl.src = "pantry.jpeg"; 
+        }
+        else if(taskData.time==="1:30 PM")
+        {
+            imgEl.src = "break.jpeg"; 
+        }
+        else if(taskData.time==="2:30 PM")
+        {
+            imgEl.src = "client.jpeg"; 
+        }
+        else if(taskData.time==="2:40 PM")
+        {
+            imgEl.src = "reception.avif"; 
+        }
+        else{
+            imgEl.src = "reception.avif"; 
+        }
+    }
+    else if(taskData.assigned==="Ankesh")
+    {
+        if(taskData.time==="1:30 PM")
+            {
+                imgEl.src = "wet.jpeg"; 
+            }
+        else if(taskData.time==="3:00 PM")
+            {
+                imgEl.src = "pantry.jpeg"; 
+            }
+        else if(taskData.time==="4:00 PM")
+        {
+            imgEl.src = "cabin.webp"; 
+        }
+        else if(taskData.time==="5:00 PM")
+            {
+                imgEl.src = "glass.jpeg"; 
+            }
+        else if(taskData.time==="6:00 PM")
+            {
+                imgEl.src = "plant.jpeg"; 
+            }
+        else if(taskData.time==="7:00 PM")
+            {
+                imgEl.src = "waste.webp"; 
+            }
+        else if(taskData.time==="8:00 PM")
+            {
+                imgEl.src = "client.jpeg"; 
+            }
+        else if(taskData.time==="9:00 PM")
+            {
+                imgEl.src = "dustbin.webp"; 
+            }
+        else{
+                imgEl.src = "reception.avif"; 
+            }
+    }
+    else if(taskData.assigned==="Neetesh")
+        {
+            if(taskData.time==="10:10 PM")
+                {
+                    imgEl.src = "lock.jpeg"; 
+                }
+            else if(taskData.time==="10:15 PM")
+                {
+                    imgEl.src = "washroom.jpeg"; 
+                }
+            else if(taskData.time==="11:00 PM")
+            {
+                imgEl.src = "wet.jpeg"; 
+            }
+            else if(taskData.time==="12:00 AM")
+                {
+                    imgEl.src = "reception.avif"; 
+                }
+            else if(taskData.time==="12:30 AM")
+                {
+                    imgEl.src = "stairs.jpeg"; 
+                }
+            else if(taskData.time==="1:00 AM")
+                {
+                    imgEl.src = "lift.jpg"; 
+                }
+            else if(taskData.time==="1:15 AM")
+                {
+                    imgEl.src = "terrace.jpeg"; 
+                }
+            else if(taskData.time==="6:00 AM")
+                {
+                    imgEl.src = "utensil.jpeg"; 
+                }
+            else if(taskData.time==="6:30 AM")
+                {
+                    imgEl.src = "cabin.webp"; 
+                }
+            else if(taskData.time==="7:00 AM")
+                {
+                    imgEl.src = "coffee.jpg"; 
+                }
+            else if(taskData.time==="7:30 AM")
+                {
+                    imgEl.src = "wet.jpeg"; 
+                }
+            else{
+                    imgEl.src = "reception.avif"; 
+                }
+        }
+
     // Create a container for the text details
     let textContainerEl = document.createElement("div");
     textContainerEl.style.display = "flex";
@@ -367,6 +515,30 @@ function appendTaskToShoppingListEl(taskId, taskData) {
     timeDetailE2.style.marginTop = "8px";
     timeDetailE2.style.width = "80%";
 
+    let assigned = document.createElement("span");
+    assigned.textContent = "Assigned to";
+    assigned.setAttribute('data-translate', 'Upload Time');
+    assigned.style.fontSize = "18px";
+    assigned.style.fontWeight = "800";
+    assigned.style.width = "120px";
+    assigned.style.backgroundColor = "#EAEFFE";
+    assigned.style.fontWeight = "bold";
+    assigned.style.color = "#000";
+    assigned.style.marginTop = "12px";
+    assigned.style.marginLeft = "22px";
+    assigned.style.textAlign = "center";
+    assigned.style.padding = "2px 0px";
+    assigned.style.borderRadius = "3px";
+
+    let assignedDetail = document.createElement("span");
+    assignedDetail.textContent = taskData.assigned;
+    assignedDetail.style.fontSize = "18px";
+    assignedDetail.style.fontWeight = "bold";
+    assignedDetail.style.color = "#335ef7";
+    assignedDetail.style.margin = "0 auto";
+    assignedDetail.style.marginTop = "8px";
+    assignedDetail.style.width = "80%";
+
     let statusEl = document.createElement("span");
     statusEl.textContent=taskData.status;
     statusEl.setAttribute('data-translate', taskData.status);
@@ -400,6 +572,8 @@ function appendTaskToShoppingListEl(taskId, taskData) {
     textContainerEl.appendChild(timeDetailEl);
     textContainerEl.appendChild(uploadTimeHeadingEl);
     textContainerEl.appendChild(timeDetailE2);
+    textContainerEl.appendChild(assigned);
+    textContainerEl.appendChild(assignedDetail);
     textContainerEl.appendChild(statusEl);
 
     // Append image and text container to the list item

@@ -148,9 +148,9 @@
         background-color: #EAEFFE;
         color:#335EF7;
         font-size:20px;
-        width:50px;
+        width:90px;
         text-align: center;
-        padding:4px 8px;
+        padding:6px 8px;
         font-weight: 500;
         border-radius: 5px;
         margin-top:15px;
@@ -184,6 +184,7 @@
         <img id="task-image" src="" alt="Task Image" style="width: 100%; height: 200px; border-radius: 8px; object-fit: cover;margin:0 auto; box-shadow: 4px 4px 15px 0px rgb(51, 94, 247, 0.2);">
         <span class="head1" data-translate="Task">Task</span><p id="task-name"></p>
         <span class="head1" data-translate="Time">Time</span><p id="task-time"></p>
+        <span class="head1" data-translate="Assigned">Assigned</span><p id="task-assigned"></p>
         <button id="status-button" data-translate="Mark as Complete">Mark as Complete</button>
     </div>
     <!-- Include Firebase SDKs -->
@@ -292,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const taskData = snapshot.val();
                 const taskNameElement = document.getElementById("task-name");
                 const taskTimeElement = document.getElementById("task-time");
+                const taskAssignedElement = document.getElementById("task-assigned");
                 // document.getElementById("task-name").textContent = `Task: ${taskData.task}`;
                 // document.getElementById("task-time").textContent = `Time: ${taskData.time}`;
                 const statusButton = document.getElementById("status-button");
@@ -311,6 +313,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 taskTimeElement.style.fontWeight = "600";
                 taskTimeElement.style.color = "#000";
                 
+                taskAssignedElement.textContent = `${taskData.assigned}`;
+                taskAssignedElement.setAttribute('data-translate', `${taskData.assigned}`);
+                taskAssignedElement.style.fontSize = "20px";
+                taskAssignedElement.style.color = "#666";
+                taskAssignedElement.style.margin = "10px 7px";
+                taskAssignedElement.style.fontWeight = "600";
+                taskAssignedElement.style.color = "#000";
 
 
                 if (taskData.status.toLowerCase() === "complete" || taskData.status.toLowerCase() === "approved") {
@@ -327,34 +336,131 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const taskImage = document.getElementById("task-image");
-        switch (taskData.time) {
-            case "07:00":
-                taskImage.src = "cabin1.webp";
-                break;
-            case "9:00":
-                taskImage.src = "water.jpg";
-                break;
-            case "9:30":
-                taskImage.src = "reception.avif";
-                break;
-            case "10:00":
-                taskImage.src = "glass.jpeg";
-                break;
-            case "12:00":
-                taskImage.src = "lunch.jpeg";
-                break;
-            case "13:30":
-                taskImage.src = "break.jpeg";
-                break;
-            case "14:00":
-                taskImage.src = "washroom.jpeg";
-                break;
-            case "14:30":
-                taskImage.src = "dustbin.webp";
-                break;
-            default:
-                taskImage.src = "reception.avif";
-                break;
+                if(taskData.assigned==="Prakash")
+    {
+        if(taskData.time==="08:20 AM")
+        {
+            taskImage.src = "water.jpg"; 
+        }
+        else if(taskData.time==="09:00 AM")
+        {
+            taskImage.src = "lunch.jpeg"; 
+        }
+        else if(taskData.time==="09:30 AM")
+            {
+                taskImage.src = "cabin.webp"; 
+            }
+        else if(taskData.time==="10:00 AM")
+            {
+                taskImage.src = "wet.jpeg"; 
+            }
+        else if(taskData.time==="12:30 PM")
+        {
+            taskImage.src = "pantry.jpeg"; 
+        }
+        else if(taskData.time==="1:30 PM")
+        {
+            taskImage.src = "break.jpeg"; 
+        }
+        else if(taskData.time==="2:30 PM")
+        {
+            taskImage.src = "client.jpeg"; 
+        }
+        else if(taskData.time==="2:40 PM")
+        {
+            taskImage.src = "reception.avif"; 
+        }
+        else{
+            taskImage.src = "reception.avif"; 
+        }
+    }
+    else if(taskData.assigned==="Ankesh")
+    {
+        if(taskData.time==="1:30 PM")
+            {
+                taskImage.src = "wet.jpeg"; 
+            }
+        else if(taskData.time==="3:00 PM")
+            {
+                taskImage.src = "pantry.jpeg"; 
+            }
+        else if(taskData.time==="4:00 PM")
+        {
+            taskImage.src = "cabin.webp"; 
+        }
+        else if(taskData.time==="5:00 PM")
+            {
+                taskImage.src = "glass.jpeg"; 
+            }
+        else if(taskData.time==="6:00 PM")
+            {
+                taskImage.src = "plant.jpeg"; 
+            }
+        else if(taskData.time==="7:00 PM")
+            {
+                taskImage.src = "waste.webp"; 
+            }
+        else if(taskData.time==="8:00 PM")
+            {
+                taskImage.src = "client.jpeg"; 
+            }
+        else if(taskData.time==="9:00 PM")
+            {
+                taskImage.src = "dustbin.webp"; 
+            }
+        else{
+            taskImage.src = "reception.avif"; 
+            }
+    }
+    else if(taskData.assigned==="Neetesh")
+        {
+            if(taskData.time==="10:10 PM")
+                {
+                    taskImage.src = "lock.jpeg"; 
+                }
+            else if(taskData.time==="10:15 PM")
+                {
+                    taskImage.src = "washroom.jpeg"; 
+                }
+            else if(taskData.time==="11:00 PM")
+            {
+                taskImage.src = "wet.jpeg"; 
+            }
+            else if(taskData.time==="12:00 AM")
+                {
+                    taskImage.src = "reception.avif"; 
+                }
+            else if(taskData.time==="12:30 AM")
+                {
+                    taskImage.src = "stairs.jpeg"; 
+                }
+            else if(taskData.time==="1:00 AM")
+                {
+                    taskImage.src = "lift.jpg"; 
+                }
+            else if(taskData.time==="1:15 AM")
+                {
+                    taskImage.src = "terrace.jpeg"; 
+                }
+            else if(taskData.time==="6:00 AM")
+                {
+                    taskImage.src = "utensil.jpeg"; 
+                }
+            else if(taskData.time==="6:30 AM")
+                {
+                    taskImage.src = "cabin.webp"; 
+                }
+            else if(taskData.time==="7:00 AM")
+                {
+                    taskImage.src = "coffee.jpg"; 
+                }
+            else if(taskData.time==="7:30 AM")
+                {
+                    taskImage.src = "wet.jpeg"; 
+                }
+            else{
+                taskImage.src = "reception.avif"; 
+                }
         }
         translatePage(getPreferredLanguage());
             } else {
