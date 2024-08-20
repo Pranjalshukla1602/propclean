@@ -486,6 +486,7 @@ async function fetchTranslation(text, targetLanguage) {
   const data = await response.json();
   return data.data.translations[0].translatedText;
 }
+
 document.addEventListener('DOMContentLoaded', () => {
       const preferredLanguage = getPreferredLanguage();
       document.getElementById('languageSelector').value = preferredLanguage;
@@ -532,89 +533,152 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             document.body.classList.add(userOffice);
 
-            let tasksRef;
-            switch (userOffice) {
-              case 'workviaa':
-                tasksRef = ref(database, "Workviaa");
-                break;
-              case 'workdesq':
-                tasksRef = ref(database, "Workdesq");
-                break;
-              case 'sso':
-                tasksRef = ref(database, "Sapna Sangeeta");
-                break;
-              case 'karyasthal':
-                tasksRef = ref(database, "Karyasthal");
-                break;
-              case 'cubispace':
-                tasksRef = ref(database, "Cubispace");
-                break; 
-              case 'worqspot':
-                tasksRef = ref(database, "Worqspot");
-                break;  
-              default:
-                alert('Unknown office');
-                window.location.href = 'index.html';
-                return;
+            if (!userOffice) {
+              showPopup();
+              document.getElementById('save-info').addEventListener('click', () => {
+                const selectedOffice = document.getElementById('office').value;
+                set(userRef, {
+                  email: user.email,
+                  office: selectedOffice
+                }).then(() => {
+                  hidePopup();
+                  document.body.classList.add(selectedOffice);
+                  loadTasksBasedOnOffice(selectedOffice);
+                }).catch((error) => {
+                  console.error("Error saving user data: ", error);
+                  alert('Error saving user data.');
+                });
+              });
+            } else {
+              loadTasksBasedOnOffice(userOffice);
             }
-
-
-            fetchAndDisplayTasks(tasksRef);
-        } else {
-          console.error("User data not found for user: ", user.uid);
-          showPopup();
-          document.getElementById('save-info').addEventListener('click', () => {
-            const office = document.getElementById('office').value;
-            set(userRef, {
-              email: user.email,
-              office: office
-            }).then(() => {
-              hidePopup();
-              document.body.classList.add(office);
-              if (isAdmin(user.email)) {
-                document.getElementById("adminDashboardLink").style.display = "block";
-              }
-              let tasksRef;
-              switch (office) {
-                case 'workviaa':
-                  tasksRef = ref(database, "Workviaa");
-                  break;
-                case 'cubispace':
-                  tasksRef = ref(database, "Cubispace");
-                  break;
-                case 'workdesq':
-                  tasksRef = ref(database, "Workdesq");
-                  break;
-                case 'sso':
-                  tasksRef = ref(database, "Sapna Sangeeta");
-                  break;
-                case 'karyasthal':
-                  tasksRef = ref(database, "Karyasthal");
-                  break;
-                case 'worqspot':
-                  tasksRef = ref(database, "Worqspot");
-                  break;
-                default:
-                  alert('Unknown office');
-                  window.location.href = 'index.html';
-                  return;
-              }
-              fetchAndDisplayTasks(tasksRef);
-            }).catch((error) => {
-              console.error("Error saving user data: ", error);
-              alert('Error saving user data.');
-            });
-          });
-        }
-      }, (error) => {
-        console.error("Error fetching user data: ", error);
-        alert('Error fetching user data.');
+          } else {
+            console.error("User data not found for user: ", user.uid);
+            alert('User data not found. Please sign up again.');
+            window.location.href = 'index.html';
+          }
+        }, (error) => {
+          console.error("Error fetching user data: ", error);
+          alert('Error fetching user data.');
+          window.location.href = 'index.html';
+        });
+      } else {
         window.location.href = 'index.html';
-      });
-    } else {
-      window.location.href = 'index.html';
+      }
+    });
+
+    function loadTasksBasedOnOffice(office) {
+      let tasksRef;
+      switch (office) {
+        case 'workviaa':
+          tasksRef = ref(database, "Workviaa");
+          break;
+        case 'workdesq':
+          tasksRef = ref(database, "Workdesq");
+          break;
+        case 'sso':
+          tasksRef = ref(database, "Sapna Sangeeta");
+          break;
+        case 'karyasthal':
+          tasksRef = ref(database, "Karyasthal");
+          break;
+        case 'cubispace':
+          tasksRef = ref(database, "Cubispace");
+          break;
+        case 'worqspot':
+          tasksRef = ref(database, "Worqspot");
+          break;  
+        default:
+          alert('Unknown office');
+          window.location.href = 'index.html';
+          return;
+      }
+      fetchAndDisplayTasks(tasksRef);
     }
-  });
+    
+  //           let tasksRef;
+  //           switch (userOffice) {
+  //             case 'workviaa':
+  //               tasksRef = ref(database, "Workviaa");
+  //               break;
+  //             case 'workdesq':
+  //               tasksRef = ref(database, "Workdesq");
+  //               break;
+  //             case 'sso':
+  //               tasksRef = ref(database, "Sapna Sangeeta");
+  //               break;
+  //             case 'karyasthal':
+  //               tasksRef = ref(database, "Karyasthal");
+  //               break;
+  //             case 'cubispace':
+  //               tasksRef = ref(database, "Cubispace");
+  //               break; 
+  //             case 'worqspot':
+  //               tasksRef = ref(database, "Worqspot");
+  //               break;  
+  //             default:
+  //               alert('Unknown office');
+  //               window.location.href = 'index.html';
+  //               return;
+  //           }
+
+
+  //           fetchAndDisplayTasks(tasksRef);
+  //       } else {
+  //         console.error("User data not found for user: ", user.uid);
+  //         showPopup();
+  //         document.getElementById('save-info').addEventListener('click', () => {
+  //           const office = document.getElementById('office').value;
+  //           set(userRef, {
+  //             email: user.email,
+  //             office: office
+  //           }).then(() => {
+  //             hidePopup();
+  //             document.body.classList.add(office);
+  //             if (isAdmin(user.email)) {
+  //               document.getElementById("adminDashboardLink").style.display = "block";
+  //             }
+  //             let tasksRef;
+  //             switch (office) {
+  //               case 'workviaa':
+  //                 tasksRef = ref(database, "Workviaa");
+  //                 break;
+  //               case 'cubispace':
+  //                 tasksRef = ref(database, "Cubispace");
+  //                 break;
+  //               case 'workdesq':
+  //                 tasksRef = ref(database, "Workdesq");
+  //                 break;
+  //               case 'sso':
+  //                 tasksRef = ref(database, "Sapna Sangeeta");
+  //                 break;
+  //               case 'karyasthal':
+  //                 tasksRef = ref(database, "Karyasthal");
+  //                 break;
+  //               case 'worqspot':
+  //                 tasksRef = ref(database, "Worqspot");
+  //                 break;
+  //               default:
+  //                 alert('Unknown office');
+  //                 window.location.href = 'index.html';
+  //                 return;
+  //             }
+  //             fetchAndDisplayTasks(tasksRef);
+  //           }).catch((error) => {
+  //             console.error("Error saving user data: ", error);
+  //             alert('Error saving user data.');
+  //           });
+  //         });
+  //       }
+  //     }, (error) => {
+  //       console.error("Error fetching user data: ", error);
+  //       alert('Error fetching user data.');
+  //       window.location.href = 'index.html';
+  //     });
+  //   } else {
+  //     window.location.href = 'index.html';
+  //   }
+  // });
 
     function fetchAndDisplayTasks(tasksRef) {
       const shoppingListEl = document.getElementById("shopping-list");
