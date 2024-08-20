@@ -588,12 +588,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (userData) {
             const userOffice = userData.office;
-
-            if(!userOffice){
-              showPopup();
+            if (isAdmin(user.email)) {
+              document.getElementById("adminDashboardLink").style.display = "block";
+              document.getElementById("logoutBtn").style.display = "block"; // Assuming logout button should also be displayed for admins
+              document.querySelector("button.repo").style.display = "block";
+            } else {
+              document.getElementById("adminDashboardLink").style.display = "none";
+              document.getElementById("logoutBtn").style.display = "block"; // Assuming logout button should be displayed for non-admins
             }
-            else{
-              document.body.classList.add(userOffice);
+            document.body.classList.add(userOffice);
 
             if (!userOffice) {
               showPopup();
