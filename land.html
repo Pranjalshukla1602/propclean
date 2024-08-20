@@ -522,6 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
           console.log("Snapshot: ", snapshot.val());
           if (userData) {
             const userOffice = userData.office;
+            console.log(userOffice);
             if (isAdmin(user.email)) {
               document.getElementById("adminDashboardLink").style.display = "block";
               document.getElementById("logoutBtn").style.display = "block"; // Assuming logout button should also be displayed for admins
