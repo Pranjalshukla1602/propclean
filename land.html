@@ -528,19 +528,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if(userOffice==="defaultOffice" || !userOffice){
               showPopup();
             }
-            else{
-              document.body.classList.add(userOffice);
+            else {
+          setupUserInterface(userOffice, user.email);
+        }
+            // else{
+            //   document.body.classList.add(userOffice);
 
-              if (isAdmin(user.email)) {
-                document.getElementById("adminDashboardLink").style.display = "block";
-                document.getElementById("logoutBtn").style.display = "block"; // Assuming logout button should also be displayed for admins
-                document.querySelector("button.repo").style.display = "block";
-              } else {
-                document.getElementById("adminDashboardLink").style.display = "none";
-                document.getElementById("logoutBtn").style.display = "block"; // Assuming logout button should be displayed for non-admins
-              }
-              loadTasksBasedOnOffice(userOffice);
-            }
+            //   if (isAdmin(user.email)) {
+            //     document.getElementById("adminDashboardLink").style.display = "block";
+            //     document.getElementById("logoutBtn").style.display = "block"; // Assuming logout button should also be displayed for admins
+            //     document.querySelector("button.repo").style.display = "block";
+            //   } else {
+            //     document.getElementById("adminDashboardLink").style.display = "none";
+            //     document.getElementById("logoutBtn").style.display = "block"; // Assuming logout button should be displayed for non-admins
+            //   }
+            //   loadTasksBasedOnOffice(userOffice);
+            // }
         } else {
           console.error("User data not found for user: ", user.uid);
           showPopup();
@@ -548,26 +551,31 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('save-info').addEventListener('click', () => {
             const office = document.getElementById('office').value;
 
-            if(office){
-              set(userRef, {
-                email: user.email,
-                office: office
-              }).then(() => {
-                hidePopup();
-                document.body.classList.add(office);
-
-                if (isAdmin(user.email)) {
-                document.getElementById("adminDashboardLink").style.display = "block";
-              }
-
-              loadTasksBasedOnOffice(userOffice);
-            }).catch((error) => {
-              console.error("Error saving user data: ", error);
-              alert('Error saving user data.');
-            });
+            if (office) {
+            saveUserOffice(userRef, user.email, office);
           } else {
             alert('Please select an office.');
           }
+          //   if(office){
+          //     set(userRef, {
+          //       email: user.email,
+          //       office: office
+          //     }).then(() => {
+          //       hidePopup();
+          //       document.body.classList.add(office);
+
+          //       if (isAdmin(user.email)) {
+          //       document.getElementById("adminDashboardLink").style.display = "block";
+          //     }
+
+          //     loadTasksBasedOnOffice(userOffice);
+          //   }).catch((error) => {
+          //     console.error("Error saving user data: ", error);
+          //     alert('Error saving user data.');
+          //   });
+          // } else {
+          //   alert('Please select an office.');
+          // }
         });
       }
     }, (error) => {
@@ -579,6 +587,35 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = 'index.html';
     }
   });
+
+  function saveUserOffice(userRef, email, office) {
+  set(userRef, {
+    email: email,
+    office: office
+  }).then(() => {
+    hidePopup();
+    setupUserInterface(office, email);
+  }).catch((error) => {
+    console.error("Error saving user data: ", error);
+    alert('Error saving user data.');
+  });
+}
+
+function setupUserInterface(office, email) {
+  document.body.classList.add(office);
+
+  if (isAdmin(email)) {
+    document.getElementById("adminDashboardLink").style.display = "block";
+    document.getElementById("logoutBtn").style.display = "block"; // Assuming logout button should also be displayed for admins
+    document.querySelector("button.repo").style.display = "block";
+  } else {
+    document.getElementById("adminDashboardLink").style.display = "none";
+    document.getElementById("logoutBtn").style.display = "block"; // Assuming logout button should be displayed for non-admins
+  }
+
+  loadTasksBasedOnOffice(office);
+}
+
 
   function loadTasksBasedOnOffice(office) {
     let tasksRef;
