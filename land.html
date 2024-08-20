@@ -525,7 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (userData) {
             const userOffice = userData.office;
 
-            if(userOffice==="defaultOffice"){
+            if(userOffice==="defaultOffice" || !userOffice){
               showPopup();
             }
             else{
@@ -539,34 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById("adminDashboardLink").style.display = "none";
                 document.getElementById("logoutBtn").style.display = "block"; // Assuming logout button should be displayed for non-admins
               }
-
-              let tasksRef;
-              switch (userOffice) {
-                case 'workviaa':
-                  tasksRef = ref(database, "Workviaa");
-                  break;
-                case 'workdesq':
-                  tasksRef = ref(database, "Workdesq");
-                  break;
-                case 'sso':
-                  tasksRef = ref(database, "Sapna Sangeeta");
-                  break;
-                case 'karyasthal':
-                  tasksRef = ref(database, "Karyasthal");
-                  break;
-                case 'cubispace':
-                  tasksRef = ref(database, "Cubispace");
-                  break; 
-                case 'worqspot':
-                  tasksRef = ref(database, "Worqspot");
-                  break;  
-                default:
-                  alert('Unknown office');
-                  window.location.href = 'index.html';
-                  return;
-              }
-
-              fetchAndDisplayTasks(tasksRef);
+              loadTasksBasedOnOffice(userOffice);
             }
         } else {
           console.error("User data not found for user: ", user.uid);
@@ -587,33 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById("adminDashboardLink").style.display = "block";
               }
 
-              let tasksRef;
-              switch (office) {
-                case 'workviaa':
-                  tasksRef = ref(database, "Workviaa");
-                  break;
-                case 'cubispace':
-                  tasksRef = ref(database, "Cubispace");
-                  break;
-                case 'workdesq':
-                  tasksRef = ref(database, "Workdesq");
-                  break;
-                case 'sso':
-                  tasksRef = ref(database, "Sapna Sangeeta");
-                  break;
-                case 'karyasthal':
-                  tasksRef = ref(database, "Karyasthal");
-                  break;
-                case 'worqspot':
-                  tasksRef = ref(database, "Worqspot");
-                  break;
-                default:
-                  alert('Unknown office');
-                  window.location.href = 'index.html';
-                  return;
-              }
-
-              fetchAndDisplayTasks(tasksRef);
+              loadTasksBasedOnOffice(userOffice);
             }).catch((error) => {
               console.error("Error saving user data: ", error);
               alert('Error saving user data.');
@@ -632,6 +579,34 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = 'index.html';
     }
   });
+
+  function loadTasksBasedOnOffice(office) {
+    let tasksRef;
+    switch (office) {
+        case 'workviaa':
+            tasksRef = ref(database, "Workviaa");
+            break;
+        case 'workdesq':
+            tasksRef = ref(database, "Workdesq");
+            break;
+        case 'sso':
+            tasksRef = ref(database, "Sapna Sangeeta");
+            break;
+        case 'karyasthal':
+            tasksRef = ref(database, "Karyasthal");
+            break;
+        case 'cubispace':
+            tasksRef = ref(database, "Cubispace");
+            break;
+        case 'worqspot':
+            tasksRef = ref(database, "Worqspot");
+            break;
+        default:
+            alert('Unknown office');
+            return;
+    }
+    fetchAndDisplayTasks(tasksRef);
+}
 
     function fetchAndDisplayTasks(tasksRef) {
       const shoppingListEl = document.getElementById("shopping-list");
