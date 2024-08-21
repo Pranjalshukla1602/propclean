@@ -5,55 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Rubik', sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-        }
+        *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Rubik', sans-serif;
+      background-color: white;
+      color: #0e0d0c;
+      user-select: none;
+      overflow-y:auto;
+    }
 
-        .menu-icon {
-            font-size: 30px;
-            cursor: pointer;
-            padding: 10px;
-            background-color: #111;
-            color: #FFF;
-        }
-
-        .sidebar {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: #111;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-            z-index: 1;
-        }
-
-        .sidebar a {
-            padding: 15px 25px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #FDFDFD;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .sidebar a:hover {
-            background-color: #575757;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 25px;
-            font-size: 30px;
-            color: #FFF;
-        }
+    
 
         .container {
             padding: 20px;
@@ -118,16 +85,19 @@
             background-color: #402773;
             cursor: pointer;
         }
+        a img{
+      width:18px;
+      height:18px;
+      margin-right: 8px;
+    }
+    div img{
+      width:20px;
+      height:20px;
+    }
     </style>
 </head>
 <body>
-    <div class="menu-icon" onclick="openNav()">&#9776;</div>
-    <div id="sidebar" class="sidebar">
-        <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
-        <a href="land.html">Homepage</a>
-        <a href="#" id="adminDashboardLink" style="display: none;">Admin Dashboard</a>
-        <a href="#" id="logoutBtn">Logout</a>
-    </div>
+
     <div class="container">
         <h1>Admin Dashboard</h1>
 
@@ -180,17 +150,13 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
-        function openNav() {
-            document.getElementById("sidebar").style.width = "250px";
-        }
-
-        function closeNav() {
-            document.getElementById("sidebar").style.width = "0";
-        }
-
         function navigateTo(page) {
-            window.location.href = page;
-        }
+      window.location.href = page;
+    }
+
+
+
+    
 
         // Firebase configuration
         const firebaseConfig = {
